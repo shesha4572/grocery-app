@@ -4,15 +4,16 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
-from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.cors import CORSMiddleware
 import mysql.connector
+from starlette.responses import Response
 
 db = mysql.connector.connect(user = "root" , password = "IiAaSs4572!" , host = "localhost");
 cur = db.cursor()
 cur.execute("USE grocery_shop_management;")
 
-app = FastAPI()
-app.add_middleware(CORSMiddleware , allow_origins = ["localhost:3000"])
+app = FastAPI(debug = True)
+app.add_middleware(CORSMiddleware , allow_origins = ["http://localhost:3000"] , allow_credentials = True , allow_headers = ['*'])
 SECRET_KEY = "efd1a9ccdb325278a5b2d8183d3bf005a17bab75609ff4fc90e83f75ef9ec617"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 15

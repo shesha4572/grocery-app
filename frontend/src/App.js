@@ -1,38 +1,34 @@
 // import logo from './logo.svg';
 // import './App.css';
-import React,{useState} from "react";
-import LoginForms from "./components/LoginForms";
-function App() {
-  const adminUser ={
-    email:"admin@gamil.com",
-    password:"admin123"
-  }
-  const [user,setUser]=useState({name:"",email:""});
-  const [error,setError]=useState("");
-  const Login=details=>{
-    console.log(details);
- if(details.email==adminUser.email && details.password==adminUser.password){
-     console.log("Logged In");
-     setUser({
-         name:details.name,
-         email:details.email
-     });
-  }
- else{
-   console.log("Details do not match");
-   setError("Details do not match");
- }
 
-  }
+import axios from "axios";
+import React,{useState} from "react";
+import LoginForms from "./LoginForms";
+function App() {
+  const [user,setUser]=useState({});
+  const [error,setError]=useState("");
+  const [jwt , setJwt] = useState({})
+    var bolDisp = false
+  const Login=details=>{
+      axios.post("http://localhost:8000/token" , details).then((res) => setJwt(res.data["access_token"]))
+ }
+  console.log(jwt)
+      console.log("Bearer " + jwt)
+      const headers = { Authorization: `Bearer ${jwt}` };
+      console.log(headers)
+      axios.get("http://localhost:8000/users/me" , {headers : {"Authorization" : `Bearer ${jwt}`}}).then((res) => setUser(res.data))
+    bolDisp = true
+
+
   const Logout=()=>{
     setUser({name:"",email:""});
 
   }
   return (
     <div className="App">
-      {(user.email!="")?(
+      {(bolDisp == '')?(
           <div className="welcome">
-            <h2>Welcome ,<span>{user.name}</span></h2>
+            <h2>Welcome ,<span>{user.full_name}</span></h2>
             <button onClick={Logout}>Logout</button>
           </div>
       ):(
