@@ -75,7 +75,7 @@
     line-height: 25px;
 }
 
-button{
+button#signUpButton , button#loginButton{
     width: 200px;
     padding: 15px 0;
     text-align: center;
@@ -102,10 +102,10 @@ span{
     transition: 0.5s;
 }
 
-button:hover span{
+button#loginButton , button#signUpButton:hover span{
     width: 100%;
 }
 
-button:hover{
+button#loginButton , button#signUpButton :hover{
    border: none;
 }

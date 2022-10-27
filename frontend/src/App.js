@@ -1,41 +1,21 @@
-// import logo from './logo.svg';
-// import './App.css';
 
-import axios from "axios";
-import React,{useState} from "react";
-import LoginForms from "./LoginForms";
+import {Route , Routes} from "react-router-dom";
+import React from "react";
+import Homepage from "./homepage";
+import {Register} from "./Register";
+import LoginPage from "./LoginPage";
+
 function App() {
-  const [user,setUser]=useState({});
-  const [error,setError]=useState("");
-  const [jwt , setJwt] = useState({})
-    var bolDisp = false
-  const Login=details=>{
-      axios.post("http://localhost:8000/token" , details).then((res) => setJwt(res.data["access_token"]))
- }
-  console.log(jwt)
-      console.log("Bearer " + jwt)
-      const headers = { Authorization: `Bearer ${jwt}` };
-      console.log(headers)
-      axios.get("http://localhost:8000/users/me" , {headers : {"Authorization" : `Bearer ${jwt}`}}).then((res) => setUser(res.data))
-    bolDisp = true
+    return(
+        <Routes>
+            <Route exact path = "/" element = {<Homepage/>}/>
+            <Route path = "/register" element = {<Register/>}/>
+            <Route path= "/login" element={<LoginPage/>}/>
+        </Routes>
 
-
-  const Logout=()=>{
-    setUser({name:"",email:""});
-
-  }
-  return (
-    <div className="App">
-      {(bolDisp == '')?(
-          <div className="welcome">
-            <h2>Welcome ,<span>{user.full_name}</span></h2>
-            <button onClick={Logout}>Logout</button>
-          </div>
-      ):(
-        <LoginForms Login={Login} error={error}/>
-      )}
-    </div>
-  );
+    )
 }
+
+
 
 export default App;

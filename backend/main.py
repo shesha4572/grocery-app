@@ -6,7 +6,7 @@ from passlib.context import CryptContext
 from pydantic import BaseModel
 from starlette.middleware.cors import CORSMiddleware
 import mysql.connector
-from starlette.responses import Response
+
 
 db = mysql.connector.connect(user = "root" , password = "IiAaSs4572!" , host = "localhost");
 cur = db.cursor()

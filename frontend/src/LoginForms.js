@@ -1,4 +1,6 @@
 import React,{useState} from 'react'
+import {Button , Input} from "@mui/material";
+import "./LoginPage.css"
 function LoginForms({Login,error}){
     const [details,setDetails]=useState({email:"",password:""});
     const submitHandler =e=>{
@@ -13,14 +15,14 @@ function LoginForms({Login,error}){
 
                 <div className="form-group">
                     <label htmlFor="username">Email:</label>
-                    <input type="text" name="username" id="username"onChange={e=>setDetails({...details,email:e.target.value})}value={details.email}/>
+                    <Input type="text" name="username" id="username"onChange={e=>setDetails({...details,email:e.target.value})}value={details.email}/>
                 </div>
 
                 <div className="form-group">
                     <label htmlFor="password">Password:</label>
                     <input type="password" name="password" id="password" onChange={e=>setDetails({...details,password:e.target.value})}value={details.password}/>
                 </div>
-                <input type="submit" value="LOGIN"/>
+                <Button value="LOGIN" id = "submitButton" onClick={submitHandler}> LOGIN </Button>
             </div>
         </form>
     )

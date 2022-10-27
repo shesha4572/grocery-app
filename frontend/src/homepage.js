@@ -1,28 +1,37 @@
-import React, {Component} from "react";
+import React , {Component} from "react";
+import "./homepage.css"
+import logo from "./logo.jpg"
+import {Link , Button} from "@mui/material";
 
-class homepage extends Component{
+
+class Homepage extends React.Component{
+
     render() {
         return (
             <div>
-                <div class = "banner">
-                    <div class="navbar">
-                        <img src="D:\Web Development Course\DBMS Mini-Project\logo.jpg" class="logo"/>
+                <div className = "banner">
+                    <div className ="navbar">
+                        <img src={logo} className={"logo"}/>
                             <ul>
                                 <li><a href="#">Home</a></li>
                                 <li><a href="#">Contact Us</a>
                                 </li>
                             </ul>
                     </div>
-                    <div class="content">
+                    <div className="content">
                         <h1>GROCERY STORE</h1>
-                        <p>For the person who loves grocery;<br>One stop destination for all your needs</br><br>Just (Name)!</br></p>
+                        <p>For the person who loves grocery;</p>
+                            <p>One stop destination for all your needs</p>
+                            <p>Just (Name)!</p>
                         <div>
-                            <button type="button"><span></span>SIGN IN</button>
-                            <button type="button">LOGIN<span></span></button>
+                            <Link href = {"/register"}><button id = "signUpButton"><span></span>SIGN UP</button></Link>
+                            <Link href = {"/login"}><button id = "loginButton">LOGIN<span></span></button></Link>
                         </div>
                     </div>
                 </div>
             </div>
-        )
+        );
     }
 }
+
+export default Homepage
