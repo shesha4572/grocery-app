@@ -1,43 +1,53 @@
-
 import './LoginPage.css';
 import axios from "axios";
-import React,{useState} from "react";
-import LoginForms from "./LoginForms";
-import {Button , Autocomplete} from "@mui/material";
+import React from "react";
+import {Button, Input} from "@mui/material";
 
-function LoginPage() {
-  const [user,setUser]=useState({});
-  const [error,setError]=useState("");
-  const [jwt , setJwt] = useState({})
-    var bolDisp = false
-  const Login=details=>{
-      axios.post("http://localhost:8000/token" , details).then((res) => setJwt(res.data["access_token"]))
-      console.log(jwt)
- }
-  console.log(jwt)
-      console.log("Bearer " + jwt)
-      const headers = { Authorization: `Bearer ${jwt}` };
-      console.log(headers)
-      axios.get("http://localhost:8000/users/me" , {headers : {"Authorization" : `Bearer ${jwt}`}}).then((res) => setUser(res.data))
-    bolDisp = true
+class LoginPage extends React.Component {
+
+    initialState = {
+        User: {
+            username: "",
+            email: "",
+            full_name: "",
+            disabled: false
+        },
+
+        jwt: {
+            access_token: "",
+            token_type: ""
+        }
+    }
+
+    state = this.initialState
 
 
-  const Logout=()=>{
-    setUser({name:"",email:""});
+    render() {
+        return (
+            <form id="login-form">
+                <div className="form-inner">
+                    <h2>Login</h2>
 
-  }
-  return (
-    <div className="App">
-      {(bolDisp == '')?(
-          <div className="welcome">
-            <h2>Welcome ,<span>{user.full_name}</span></h2>
-            <button onClick={Logout}>Logout</button>
-          </div>
-      ):(
-        <LoginForms Login={Login} error={error}/>
-      )}
-    </div>
-  );
+                    <div className="form-group">
+                        <label htmlFor="username">Email:</label>
+                        <Input type="text" name="username" id="username"/>
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="password">Password:</label>
+                        <Input type="password" name="password" id="password"/>
+                    </div>
+                    <Button value="LOGIN" id="submitButton" onClick={this.LoginSubmit}> LOGIN </Button>
+                </div>
+            </form>
+        )
+    }
+
+    LoginSubmit = async() => {
+        axios.post("http://localhost:8000/token", new FormData(document.getElementById("login-form"))).then(res => {
+            this.setState({jwt: res.data})
+            return axios.get("http://localhost:8000/users/me", {headers: {"Authorization": `Bearer ${res.data.access_token}`}})
+        }).then(res => this.setState({User: res.data}))
+    }
 }
-
-export default LoginPage;
+export default LoginPage
