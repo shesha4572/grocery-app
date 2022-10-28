@@ -8,7 +8,6 @@ export const Register = (props) => {
     const [name, setName] = useState('');
     const [contact, setContact] = useState('');
     const [gender, setGender] = useState('');
-    const [address, setAddress] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -27,9 +26,6 @@ export const Register = (props) => {
             <br></br>
             <label htmlFor="gender">Gender:</label>
             <input value={gender} name="gender" id="gender" placeholder="Enter your gender here" />
-            <br></br>
-            <label htmlFor="address">Address:</label>
-            <input value={address} name="address" id="address" placeholder="Enter your address here" />
             <br></br>
             <label htmlFor="email">Email-ID:</label>
             <input value={email} onChange={(e) => setEmail(e.target.value)}type="email" placeholder="Enter your email-id here" id="email" name="email" />

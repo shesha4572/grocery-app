@@ -8,7 +8,7 @@
   font-family: montserrat,sans-serif;
   box-shadow: 5px 5px 0px rgba(255,255,255,0.15);
 }
-input#username,input#password,button#submitButton{
+#username,#password,#submitButton{
   appearance:none;
   background-color:grey;
   border:2px solid black;
@@ -22,12 +22,12 @@ input#username,input#password,button#submitButton{
   border-radius: 5px;
   outline:none;
 }
-form#user-form{
+#login-form{
   display:flex;
   position: relative;
 
 }
-form:after{
+#login-form:after{
   content: '';
   display:block;
   position:absolute;
@@ -37,6 +37,8 @@ form:after{
   bottom: -5px;
   z-index: 1;
   background-image:url("https://imageio.forbes.com/specials-images/imageserve/5f8ceed2e11880c542eca6b1/0x0.jpg?format=jpg&width=1200");
+  height: 100vh;
+  width : 100vw;
   background-size: 100%;
 }
 form .form-inner{
