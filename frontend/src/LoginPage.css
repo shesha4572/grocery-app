@@ -4,53 +4,45 @@
   box-sizing: border-box;
   border-radius: 25px;
   border-right: 10px;
-  text-decoration-color: #dddddd;
+  text-decoration-color:white;
   font-family: montserrat,sans-serif;
-  //box-shadow: 5px 5px 0px rgba(255,255,255,0.15);
+  box-shadow: 5px 5px 0px rgba(255,255,255,0.15);
 }
-input#username,input#password , button#submitButton{
+input#username,input#password,button#submitButton{
   appearance:none;
   background-color:grey;
   border:2px solid black;
   padding:5px 3px;
   text-align:center;
   text-decoration: none;
-  display: inline-block;
+  display:block;
   font-size: 16px;
   margin: 4px 2px;
   cursor:pointer;
   border-radius: 5px;
   outline:none;
 }
-.LoginForm{
-  background-image: url("https://imageio.forbes.com/specials-images/imageserve/5f8ceed2e11880c542eca6b1/0x0.jpg?format=jpg&width=1200");
-  backdrop-filter:blur(80%);
-  background-size: 100%;
-  height: 100vh;
+form#user-form{
   display:flex;
-  align-items: center;
-  justify-content: center;
-  background-color:transparent;
-}
-form{
-  display: block;
   position: relative;
+
 }
 form:after{
   content: '';
-  display:inline-flex;
-  position: absolute;
+  display:block;
+  position:absolute;
   top: -5px;
   left: -5px;
   right: -5px;
   bottom: -5px;
   z-index: 1;
-  background-image: linear-gradient(to bottom right,yellow,black);
+  background-image:url("https://imageio.forbes.com/specials-images/imageserve/5f8ceed2e11880c542eca6b1/0x0.jpg?format=jpg&width=1200");
+  background-size: 100%;
 }
 form .form-inner{
   position: relative;
   display: block;
-  background-color:navajowhite;
+  background-color:transparent;
   padding: 30px;
   border-radius:25px;
   z-index:2;
@@ -73,7 +65,7 @@ form .form-inner .form-group{
   margin-bottom: 5px;
   transition: 0.4s;
 }
-.form-inner .form-group:focus-within label{
+.form-inner .form-group:focus-within label#Elabel{
   color:#FE4880;
 }
 form .form-inner .from-group input{
@@ -81,7 +73,6 @@ form .form-inner .from-group input{
   width:100%;
   border:20px solid red;
   padding: 5px;
-  background-color: #F8E8E8;
   border-radius:10px;
   transition: 0.4s;
 }
