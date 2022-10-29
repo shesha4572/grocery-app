@@ -42,7 +42,7 @@
   background-size: 100%;
 }
 form .form-inner{
-  position: relative;
+  position:absolute;
   display: block;
   background-color:transparent;
   padding: 30px;

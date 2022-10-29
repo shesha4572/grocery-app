@@ -1,44 +1,59 @@
 import React, { useState } from "react";
 import "./Register.css"
+import {Grid, Paper, Avatar, Typography, TypographyVariant, Button,NativeSelect,FormGroup,Checkbox} from "@mui/material";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormControl from "@material-ui/core/FormControl";
+import FormLabel from "@material-ui/core/FormLabel";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import Radio from "@material-ui/core/Radio";
+export const Register=()=> {
+    const styles = {
+        paperContainer: {
+            padding: '30px 20px', width: 300, margin: "20px auto"
+        }
+    };
+    const Headerstyle = {margin: 0}
+    const backstyle = {backgroundColor: 'green'}
+    const marginTop={marginTop:7}
+        return (
 
-export const Register = (props) => {
-    const [email, setEmail] = useState('');
-    const [userid, setUserid] = useState('');
-    const [pass, setPass] = useState('');
-    const [name, setName] = useState('');
-    const [contact, setContact] = useState('');
-    const [gender, setGender] = useState('');
+            <Grid>
+                <Paper elevation={20} style={styles.paperContainer}>
+                    <Grid align="center">
+                        <Avatar style={backstyle}>
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log(email);
-    }
+                        </Avatar>
+                        <h2 style={Headerstyle}>Sign Up</h2>
+                        <Typography variant="caption" component="h1">Please fill this from to create an
+                            account!</Typography>
+                    </Grid>
+                    <form>
+                        <TextField fullWidth label='Name' placeholder="Enter your name" variant='standard'/>
+                        <TextField fullWidth label='Email' placeholder="Enter your email" variant='standard'/>
+                        <FormControl fullWidth>
+                            <InputLabel variant="standard" htmlFor="uncontrolled-native">
+                                Gender
+                            </InputLabel>
+                            <NativeSelect
+                                inputProps={{
+                                    name: 'Gender',
+                                    id: 'uncontrolled-native',
+                                }}
+                            >
+                                <option value={10}>Male</option>
+                                <option value={20}>Female</option>
+                            </NativeSelect>
+                        </FormControl>
+                        <TextField fullWidth label='Phone Number' placeholder="Enter your phone number"
+                                   variant='standard'/>
+                        <TextField fullWidth label='Password' placeholder="Enter your password" variant='standard'/>
+                        <TextField fullWidth label='Confirm Password' placeholder="Please confirm your password"
+                                   variant='standard'/>
+                        <Button type='submit' variant='contained' style={marginTop} color='primary'>Sign Up</Button>
+                    </form>
+                </Paper>
+            </Grid>
 
-    return (
-        <div className="auth-form-container">
-            <h2>Registration page</h2>
-        <form className="register-form" onSubmit={handleSubmit}>
-            <label htmlFor="name">Name:</label>
-            <input value={name} name="name" id="name" placeholder="Enter your name here" />
-            <br></br>
-            <label htmlFor="contact">Contact:</label>
-            <input value={contact} name="contact" id="contact" placeholder="Enter your Contact no. here" />
-            <br></br>
-            <label htmlFor="gender">Gender:</label>
-            <input value={gender} name="gender" id="gender" placeholder="Enter your gender here" />
-            <br></br>
-            <label htmlFor="email">Email-ID:</label>
-            <input value={email} onChange={(e) => setEmail(e.target.value)}type="email" placeholder="Enter your email-id here" id="email" name="email" />
-		    <br></br>
-         	<label htmlFor="userid">User-id:</label>
-         	<input value={userid} onChange={(e) => setUserid(e.target.value)}type="userid" placeholder="Enter your user-id here" id="userid" name="userid" />
-            <br></br>
-            <label htmlFor="password">Password:</label>
-            <input value={pass} onChange={(e) => setPass(e.target.value)} type="password" placeholder="Enter your password" id="password" name="password" />
-            <br></br>
-            <button type="submit">Log In</button>
-        </form>
-        <button className="link-btn" onClick={() => props.onFormSwitch('login')}>Already have an account? Login here.</button>
-    </div>
-    )
+        )
 }
+
