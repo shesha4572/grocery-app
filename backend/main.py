@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from typing import Optional
 
 import fastapi
 from fastapi import Depends, FastAPI, HTTPException, status, Form
@@ -46,6 +47,15 @@ class UserForm(BaseModel):
 
 class UserInDB(User):
     hashed_password: str
+
+class GroceryItem(BaseModel):
+    id : int
+    name : str
+    desc : str
+    image_link : str
+    volume : Optional[float] = None
+    weight : Optional[float] = None
+    price : float
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -158,6 +168,28 @@ async def createUser(username : str = Form(...) , full_name : str = Form(...) , 
         )
     create_cust_in_db(full_name , gender , email , username , password)
     return {"Status" : "Success"}
+
+
+@app.get("/getAllItems" , response_model=list[GroceryItem])
+def getAllItems():
+    cur.execute("SELECT * FROM Items;")
+    items = cur.fetchall()
+    Grocery_items = []
+    table_name = ""
+    for i in items:
+        if i[3] == 1:
+            table_name = "items_weight"
+        elif i[3] == 2:
+            table_name = "items_volume"
+        cur.execute(f"SELECT * FROM {table_name} WHERE Item_ID = {i[0]}")
+        det = cur.fetchall()
+        for j in det:
+            if i[3] == 1:
+                Grocery_items.append(GroceryItem(id = j[0] , name = i[1] , desc = i[2] , image_link = i[-1] , weight = j[1] , price = j[2]))
+            elif i[3] == 2:
+                Grocery_items.append(GroceryItem(id = j[0] , name = i[1] , desc = i[2] , image_link = i[-1] , volume = j[1] , price = j[2]))
+
+    return Grocery_items
 
 
 

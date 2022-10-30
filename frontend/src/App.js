@@ -4,6 +4,7 @@ import React from "react";
 import Homepage from "./homepage";
 import {Register} from "./Register";
 import LoginPage from "./LoginPage";
+import ProductList from "./ProductList";
 
 function App() {
     return(
@@ -11,6 +12,7 @@ function App() {
             <Route exact path = "/" element = {<Homepage/>}/>
             <Route path = "/register" element = {<Register/>}/>
             <Route path= "/login" element={<LoginPage/>}/>
+            <Route path= "/allItems" element={<ProductList/>}/>
         </Routes>
 
     )
