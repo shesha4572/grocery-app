@@ -1,11 +1,19 @@
 import React, { useState } from "react";
 import "./Register.css"
-import {Grid, Paper, Avatar, Typography, TypographyVariant, Button,NativeSelect,FormGroup,Checkbox} from "@mui/material";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormControl from "@material-ui/core/FormControl";
-import FormLabel from "@material-ui/core/FormLabel";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import Radio from "@material-ui/core/Radio";
+import {
+    Grid,
+    Paper,
+    Avatar,
+    Typography,
+    TypographyVariant,
+    Button,
+    NativeSelect,
+    FormGroup,
+    Checkbox,
+    TextField, InputLabel, FormControl
+} from "@mui/material";
+
+
 export const Register=()=> {
     const styles = {
         paperContainer: {

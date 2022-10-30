@@ -24,7 +24,7 @@ class Homepage extends React.Component{
                             <p>One stop destination for all your needs</p>
                             <p>Just (Name)!</p>
                         <div className="links-buttons">
-                            <Link href = {"/register"}><button id = "signUpButton"><span></span>SIGN UP</button></Link>
+                            <Link href = {"/register"}><button id = "signUpButton">SIGN UP<span></span></button></Link>
                             <Link href = {"/login"}><button id = "loginButton">LOGIN<span></span></button></Link>
                         </div>
                     </div>

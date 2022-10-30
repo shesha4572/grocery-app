@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
-from fastapi import Depends, FastAPI, HTTPException, status
+
+import fastapi
+from fastapi import Depends, FastAPI, HTTPException, status, Form
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
@@ -33,6 +35,13 @@ class User(BaseModel):
     email: str | None = None
     full_name: str | None = None
     disabled: bool | None = None
+
+class UserForm(BaseModel):
+    username: str
+    email: str | None = None
+    full_name: str | None = None
+    password : str
+    gender : str
 
 
 class UserInDB(User):
@@ -106,6 +115,15 @@ async def get_current_active_user(current_user: User = Depends(get_current_user)
     return current_user
 
 
+def check_username_unique(username):
+    cur.execute(f"SELECT * FROM Customer WHERE Username LIKE '{username}';")
+    return cur.fetchone() is None
+
+def create_cust_in_db(name , gender , email_id , username , password ):
+    hashed = get_password_hash(password)
+    cur.execute(f"INSERT INTO Customer(Name , Gender , Email_ID , Username , Hashed_pass) VALUES('{name}' , '{gender}' , '{email_id}' , '{username}' ,'{hashed}')")
+    db.commit()
+
 @app.post("/token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     user = authenticate_user(form_data.username, form_data.password)
@@ -130,6 +148,19 @@ async def read_users_me(current_user: User = Depends(get_current_active_user)):
 @app.get("/users/me/items/")
 async def read_own_items(current_user: User = Depends(get_current_active_user)):
     return [{"item_id": "Foo", "owner": current_user.username}]
+
+@app.post("/createUser/")
+async def createUser(username : str = Form(...) , full_name : str = Form(...) , gender : str = Form(...) , email : str = Form(...) , password : str = Form(...)):
+    if not check_username_unique(username):
+        raise HTTPException(
+            status_code = status.HTTP_409_CONFLICT,
+            detail = "Username already exists"
+        )
+    create_cust_in_db(full_name , gender , email , username , password)
+    return {"Status" : "Success"}
+
+
+
 
 
 if __name__ == "__main__":
