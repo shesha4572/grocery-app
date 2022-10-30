@@ -5,13 +5,11 @@ import {
     Paper,
     Avatar,
     Typography,
-    TypographyVariant,
     Button,
     NativeSelect,
-    FormGroup,
-    Checkbox,
     TextField, InputLabel, FormControl
 } from "@mui/material";
+import axios from "axios";
 
 
 export const Register=()=> {
@@ -23,7 +21,27 @@ export const Register=()=> {
     const Headerstyle = {margin: 0}
     const backstyle = {backgroundColor: 'green'}
     const marginTop={marginTop:7}
-        return (
+
+    function handleSubmit(){
+        const form = new FormData()
+        form.set("username" , username)
+        form.set("email" , email)
+        form.set("password" , password)
+        form.set("gender" , gender)
+        form.set("full_name" , Name)
+        axios.post("http://localhost:8000/createUser/" , form).then(res => console.log(res.data))
+        console.log(Name , email , password , confirmPass , username , gender)
+    }
+
+    const [confirmPass , setConfirmPass] = useState("")
+    const [Name , setName] = useState("")
+    const [email , setEmail] = useState("")
+    const [password , setPassword] = useState("")
+    const [gender , setGender] = useState("M")
+    const [username , setUsername] = useState("")
+
+
+    return (
 
             <Grid>
                 <Paper elevation={20} style={styles.paperContainer}>
@@ -36,8 +54,8 @@ export const Register=()=> {
                             account!</Typography>
                     </Grid>
                     <form>
-                        <TextField fullWidth label='Name' placeholder="Enter your name" variant='standard'/>
-                        <TextField fullWidth label='Email' placeholder="Enter your email" variant='standard'/>
+                        <TextField fullWidth label='Name' placeholder="Enter your name" variant='standard' onChange={e => setName(e.target.value)}/>
+                        <TextField fullWidth label='Email' placeholder="Enter your email" variant='standard' onChange={e => setEmail(e.target.value)}/>
                         <FormControl fullWidth>
                             <InputLabel variant="standard" htmlFor="uncontrolled-native">
                                 Gender
@@ -47,17 +65,18 @@ export const Register=()=> {
                                     name: 'Gender',
                                     id: 'uncontrolled-native',
                                 }}
+                                onInput={e => setGender(e.target.value === "Male" ? "M" : "F")}
                             >
-                                <option value={10}>Male</option>
-                                <option value={20}>Female</option>
+                                <option value={"Male"}>Male</option>
+                                <option value={"Female"}>Female</option>
                             </NativeSelect>
                         </FormControl>
-                        <TextField fullWidth label='Phone Number' placeholder="Enter your phone number"
-                                   variant='standard'/>
-                        <TextField fullWidth label='Password' placeholder="Enter your password" variant='standard'/>
+                        <TextField fullWidth label='Username' placeholder="Enter your username"
+                                   variant='standard' onChange={e => setUsername(e.target.value)}/>
+                        <TextField fullWidth label='Password' placeholder="Enter your password" variant='standard' onChange={e => setPassword(e.target.value)}/>
                         <TextField fullWidth label='Confirm Password' placeholder="Please confirm your password"
-                                   variant='standard'/>
-                        <Button type='submit' variant='contained' style={marginTop} color='primary'>Sign Up</Button>
+                                   variant='standard' onChange={e => setConfirmPass(e.target.value)}/>
+                        <Button variant='contained' style={marginTop} color='primary' onClick={handleSubmit}>Sign Up</Button>
                     </form>
                 </Paper>
             </Grid>
