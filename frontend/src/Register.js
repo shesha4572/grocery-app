@@ -15,9 +15,19 @@ import axios from "axios";
 export const Register=()=> {
     const styles = {
         paperContainer: {
-            padding: '30px 20px', width: 300, margin: "20px auto"
+            padding: '30px 20px', width: 300, margin: "auto",borderRadius:'25px'
         }
     };
+    const bstyles = {
+        paperContainer: {
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            width:'100%',
+            height:'100vh',
+            backgroundImage:'url("https://imageio.forbes.com/specials-images/imageserve/5f8ceed2e11880c542eca6b1/0x0.jpg?format=jpg&width=1200")'
+        }
+    };
+
     const Headerstyle = {margin: 0}
     const backstyle = {backgroundColor: 'green'}
     const marginTop={marginTop:7}
@@ -43,7 +53,7 @@ export const Register=()=> {
 
     return (
 
-            <Grid>
+            <Grid  style={bstyles.paperContainer}>
                 <Paper elevation={20} style={styles.paperContainer}>
                     <Grid align="center">
                         <Avatar style={backstyle}>
