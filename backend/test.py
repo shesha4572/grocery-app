@@ -1,8 +1,7 @@
 import mysql.connector
 
-db = mysql.connector.connect(user = "root" , password = "IiAaSs4572!" , host = "localhost");
+db = mysql.connector.connect(user = "sql12544400" , password = "QLeluWF5Ad" , host = "sql12.freemysqlhosting.net");
 cur = db.cursor()
-user = "johndoe"
-cur.execute("USE grocery_shop_management;")
-cur.execute("SELECT * FROM Customer WHERE Username LIKE 'johndoe';")
+cur.execute("USE sql12544400;")
+cur.execute("SELECT * FROM items_weight;")
 print(cur.fetchone())

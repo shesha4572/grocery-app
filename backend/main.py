@@ -1,7 +1,5 @@
 from datetime import datetime, timedelta
 from typing import Optional
-
-import fastapi
 from fastapi import Depends, FastAPI, HTTPException, status, Form
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
@@ -11,15 +9,15 @@ from starlette.middleware.cors import CORSMiddleware
 import mysql.connector
 
 
-db = mysql.connector.connect(user = "root" , password = "IiAaSs4572!" , host = "localhost");
+db = mysql.connector.connect(user = "sql12544400" , password = "QLeluWF5Ad" , host = "sql12.freemysqlhosting.net");
 cur = db.cursor()
-cur.execute("USE grocery_shop_management;")
+cur.execute("USE sql12544400;")
 
 app = FastAPI(debug = True)
 app.add_middleware(CORSMiddleware , allow_origins = ["http://localhost:3000"] , allow_credentials = True , allow_headers = ['*'])
 SECRET_KEY = "efd1a9ccdb325278a5b2d8183d3bf005a17bab75609ff4fc90e83f75ef9ec617"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 15
+ACCESS_TOKEN_EXPIRE_MINUTES = 1
 
 
 class Token(BaseModel):
@@ -56,6 +54,7 @@ class GroceryItem(BaseModel):
     volume : Optional[float] = None
     weight : Optional[float] = None
     price : float
+    stock : int
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -72,7 +71,7 @@ def get_password_hash(password):
 
 
 def get_user(username: str):
-    cur.execute(f"SELECT * FROM CUSTOMER WHERE Username LIKE '{username}'")
+    cur.execute(f"SELECT * FROM Customer WHERE Username LIKE '{username}'")
     res = cur.fetchone()
     if(res is None):
         return res
@@ -185,14 +184,11 @@ def getAllItems():
         det = cur.fetchall()
         for j in det:
             if i[3] == 1:
-                Grocery_items.append(GroceryItem(id = j[0] , name = i[1] , desc = i[2] , image_link = i[-1] , weight = j[1] , price = j[2]))
+                Grocery_items.append(GroceryItem(id = j[0] , name = i[1] , desc = i[2] , image_link = i[-1] , weight = j[1] , price = j[2] , stock = j[3]))
             elif i[3] == 2:
-                Grocery_items.append(GroceryItem(id = j[0] , name = i[1] , desc = i[2] , image_link = i[-1] , volume = j[1] , price = j[2]))
+                Grocery_items.append(GroceryItem(id = j[0] , name = i[1] , desc = i[2] , image_link = i[-1] , volume = j[1] , price = j[2] , stock = j[3]))
 
-    return Grocery_items
-
-
-
+    return Grocery_items * 5
 
 
 if __name__ == "__main__":

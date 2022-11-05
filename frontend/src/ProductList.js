@@ -1,6 +1,7 @@
 import React  from "react";
 import axios from "axios";
-import {Button, ButtonBase, Grid, Typography} from "@mui/material";
+import {Button, ButtonBase, Grid, ImageList, Paper, TextField, Typography} from "@mui/material";
+import logo from "./logo.jpg";
 
 
 class ProductList extends React.Component{
@@ -16,23 +17,23 @@ class ProductList extends React.Component{
 
     parseItems(item){
         return(
-            <Grid item xs={4} minWidth={0} minHeight={100} margin={"5px"} style={{background : 'lightblue' , borderRadius : '25px'}}>
+            <Grid item xs = {12} margin={"5px"} style={{background : 'ghostwhite' , borderRadius : '25px' , padding : "20px 20px 20px 500px" , minHeight : '350px' , minWidth : '200px' , justifyItems : "centre"}}>
         <Grid item>
-          <ButtonBase sx={{ width: 128, height: 128 }}>
+          <ButtonBase href="/#">
             <img alt="complex" style={{ width: 128, height: 128 }} src={item.image_link} />
           </ButtonBase>
         </Grid>
-        <Grid item xs={12} sm container>
-          <Grid item xs container direction="column" spacing={2}>
+        <Grid xs={12} sm container>
+          <Grid item container spacing={2}>
             <Grid item xs>
-              <Typography gutterBottom variant="subtitle1" component="div">
+              <Typography gutterBottom variant="h6" component="div">
                   {item.name}
               </Typography>
-              <Typography variant="body2" gutterBottom>
+              <Typography variant="subtitle1">
                   {item.weight === null ? `Volume : ${item.volume} Litre` : `Weight : ${item.weight} KG`}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
-                  {item.desc}
+                <Typography variant="subtitle1">
+                  {item.desc.length <= 100 ? item.desc : item.desc.slice(0 , 98) + "..."}
               </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Item Id : #{item.id}
@@ -40,21 +41,39 @@ class ProductList extends React.Component{
             </Grid>
           </Grid>
           <Grid item>
-            <Typography variant="subtitle1" component="div">
-                Rs.{item.price}
+            <Typography variant="h6" component="div">
+                Rs. {item.price.toFixed(2)} <br/> {item.stock <= 5 ? "Hurry UP! Stock is low!!!" : `Stock : ${item.stock} units`}
             </Typography>
           </Grid>
         </Grid>
-                <Button variant="contained" color={"primary"}>Add to Cart</Button>
       </Grid>
         )
     }
 
     render() {
         return(
-            <Grid container spacing={{ xs: 5, md: 4 }} columns={{ xs: 4, sm: 8, md: 12 }}>
-                {this.state.items.map(this.parseItems)}
-            </Grid>
+            <Paper
+            sx={{
+                p: 2,
+                margin: 'auto',
+                flexGrow: 1,
+                backgroundColor: (theme) =>
+                theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+                display : "flex"
+            }}>
+                <div>
+                    <div className ="navbar">
+                        <img src={logo} className={"logo"}/>
+                            <ul>
+                                <TextField fullWidth margin={"dense"} placeholder={"Search"} variant='outlined'/><span></span>
+                            </ul>
+                    </div>
+                    <Grid container padding={"20px 20px 20px 20px"}>
+                        {this.state.items.map(this.parseItems)}
+                    </Grid>
+                    </div>
+                </Paper>
+
         )
     }
 
