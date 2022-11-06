@@ -1,6 +1,6 @@
 import React  from "react";
 import axios from "axios";
-import {Button, ButtonBase, Grid, ImageList, Paper, TextField, Typography} from "@mui/material";
+import {Box, Button, ButtonBase, Grid, ImageList, Paper, TextField, Typography} from "@mui/material";
 import logo from "./logo.jpg";
 
 
@@ -44,10 +44,11 @@ class ProductList extends React.Component{
             </Grid>
           </Grid>
           <Grid item>
-            <Typography variant="h6" component="div">
+            <Typography variant="h6" component="div" sx={item.stock <= 5 ?{textColor:'red'}:{textColor: 'green'}}>
                <b> Rs. {item.price.toFixed(2)} <br/> {item.stock <= 5 ? "Hurry UP! Stock is low!!!" : `In Stock`} </b>
             </Typography>
           </Grid>
+            <Box sx={{width:'100%',borderBottom:1}}/>
         </Grid>
       </Grid>
         )
@@ -55,27 +56,19 @@ class ProductList extends React.Component{
 
     render() {
         return(
-            <Paper
-            sx={{
-                p: 2,
-                margin: 'auto',
-                flexGrow: 1,
-                backgroundColor: (theme) =>
-                theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-                display : "flex"
-            }}>
-                <div>
+                <div style={{
+                    border: '10px solid rgba(100, 100, 100, 0.05)',
+                }
+                }>
                     <div className ="navbar">
                         <img src={logo} className={"logo"}/>
-                            <ul>
-                                <TextField fullWidth margin={"dense"} placeholder={"Search"} variant='outlined'/><span></span>
-                            </ul>
+                         <TextField fullWidth margin={"dense"} placeholder={"Search"} variant='outlined'/>
                     </div>
-                    <Grid container padding={"20px 20px 20px 20px"}>
+                    <Grid container padding={"20px 20px 20px 20px"} style={{border: '10px solid rgba(100, 100, 100, 0.05)'}}>
                         {this.state.items.map(this.parseItems)}
                     </Grid>
+                    <hr/>
                     </div>
-                </Paper>
 
         )
     }
