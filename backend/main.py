@@ -17,7 +17,7 @@ app = FastAPI(debug = True)
 app.add_middleware(CORSMiddleware , allow_origins = ["http://localhost:3000"] , allow_credentials = True , allow_headers = ['*'])
 SECRET_KEY = "efd1a9ccdb325278a5b2d8183d3bf005a17bab75609ff4fc90e83f75ef9ec617"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 1
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
 class Token(BaseModel):
@@ -189,6 +189,28 @@ def getAllItems():
                 Grocery_items.append(GroceryItem(id = j[0] , name = i[1] , desc = i[2] , image_link = i[-1] , volume = j[1] , price = j[2] , stock = j[3]))
 
     return Grocery_items * 5
+
+@app.get("/getItem/{id}" , response_model=GroceryItem)
+def getItemByID(id):
+    cur.execute(f"SELECT * FROM Items WHERE Item_ID = {id};")
+    i = cur.fetchone()
+    if i is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail = "Item not found"
+        )
+    if i[3] == 1:
+        table_name = "items_weight"
+    elif i[3] == 2:
+        table_name = "items_volume"
+    cur.execute(f"SELECT * FROM {table_name} WHERE Item_ID = {i[0]}")
+    det = cur.fetchall()
+    for j in det:
+        if i[3] == 1:
+            return GroceryItem(id=j[0], name=i[1], desc=i[2], image_link=i[-1], weight=j[1], price=j[2], stock=j[3])
+        elif i[3] == 2:
+            return GroceryItem(id=j[0], name=i[1], desc=i[2], image_link=i[-1], volume=j[1], price=j[2], stock=j[3])
+
 
 
 if __name__ == "__main__":

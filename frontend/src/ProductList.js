@@ -16,11 +16,14 @@ class ProductList extends React.Component{
     }
 
     parseItems(item){
+        if(item.stock <= 0){
+            return ;
+        }
         return(
-            <Grid item xs = {12} margin={"5px"} style={{background : 'ghostwhite' , borderRadius : '25px' , padding : "20px 20px 20px 500px" , minHeight : '350px' , minWidth : '200px' , justifyItems : "centre"}}>
-        <Grid item>
+            <Grid item container xs = {12} margin={"5px"} style={{borderRadius : '25px' , padding : "20px 20px 20px 20px" , minHeight : '350px' , minWidth : '200px' , paddingLeft : "200px"}}>
+        <Grid item sx = {{paddingRight : "150px"}}>
           <ButtonBase href="/#">
-            <img alt="complex" style={{ width: 128, height: 128 }} src={item.image_link} />
+            <img alt="complex" style={{ width: 256, height: 256 }} src={item.image_link} />
           </ButtonBase>
         </Grid>
         <Grid xs={12} sm container>
@@ -42,7 +45,7 @@ class ProductList extends React.Component{
           </Grid>
           <Grid item>
             <Typography variant="h6" component="div">
-                Rs. {item.price.toFixed(2)} <br/> {item.stock <= 5 ? "Hurry UP! Stock is low!!!" : `Stock : ${item.stock} units`}
+               <b> Rs. {item.price.toFixed(2)} <br/> {item.stock <= 5 ? "Hurry UP! Stock is low!!!" : `In Stock`} </b>
             </Typography>
           </Grid>
         </Grid>
