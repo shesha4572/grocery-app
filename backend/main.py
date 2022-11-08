@@ -188,7 +188,7 @@ def getAllItems():
         elif i[3] == 2:
             Grocery_items.append(GroceryItem(id = j[0] , name = i[1] , desc = i[2] , image_link = i[-1] , type = 2 , details = details))
 
-    return Grocery_items * 5
+    return Grocery_items
 
 @app.get("/getItem/{id}" , response_model=GroceryItem)
 def getItemByID(id):

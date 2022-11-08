@@ -1,4 +1,5 @@
 import {Button, ButtonBase, Grid, MenuItem, Select, TextField, Typography} from "@mui/material";
+
 import React from "react";
 
 class ParseItems extends React.Component{
@@ -10,7 +11,7 @@ class ParseItems extends React.Component{
             desc : "",
             image_link : "",
             type : 0,
-            details : [0 , 0 , 0]
+            details : [[0 , 0 , 0]]
         },
         price : 0,
         stock : 0,
@@ -24,9 +25,21 @@ class ParseItems extends React.Component{
         this.setState({item : this.props.item , price : this.props.item.details[0][1] , stock : this.props.item.details[0][2]})
     }
 
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if(this.props.id !== prevProps.id) {
+            this.setState({
+                item: this.props.item,
+                price: this.props.item.details[0][1],
+                stock: this.props.item.details[0][2]
+            })
+        }
+    }
+
     render() {
         const unit = this.state.item.type === 1 ? "Kg" : "L"
         const text = this.state.item.type === 1 ? "Weight" : "Volume"
+        console.log(this.state.item.name)
         return (
             <Grid item container xs={12} margin={"5px"} style={{
                 padding: "20px 20px 20px 200px",
@@ -39,9 +52,10 @@ class ParseItems extends React.Component{
                         <img alt="complex" style={{width: 192, height: 192}} src={this.state.item.image_link}/>
                     </ButtonBase> <br/><br/>
                     <Grid>
-                        <Button variant={"contained"} color={"warning"} size={"large"} disabled={this.state.stock === 0} fullWidth
-                                sx={{p: 2, borderRadius: 25}}>Add to Cart</Button> <br/><br/> <Button
-                        variant={"contained"} color={"success"} size={"large"} disabled={this.state.stock === 0} fullWidth
+                        <Button variant={"contained"} color={"warning"} size={"large"}  disabled={this.state.stock === 0} fullWidth
+                                sx={{p: 2, borderRadius: 25}}>Add to Cart</Button> <br/><br/>
+                        <Button
+                        variant={"contained"} color={"success"} size={"large"}  disabled={this.state.stock === 0} fullWidth
                         sx={{p: 2, borderRadius: 25}}>Buy Now</Button>
                     </Grid>
                 </Grid>
