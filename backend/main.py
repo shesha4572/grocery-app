@@ -9,9 +9,9 @@ from starlette.middleware.cors import CORSMiddleware
 import mysql.connector
 
 
-db = mysql.connector.connect(user = "sql12544400" , password = "QLeluWF5Ad" , host = "sql12.freemysqlhosting.net");
+db = mysql.connector.connect(user = "root" , password = "root" , host = "localhost");
 cur = db.cursor()
-cur.execute("USE sql12544400;")
+cur.execute("USE grocery_shop_management;")
 
 app = FastAPI(debug = True)
 app.add_middleware(CORSMiddleware , allow_origins = ["http://localhost:3000"] , allow_credentials = True , allow_headers = ['*'])
@@ -51,10 +51,8 @@ class GroceryItem(BaseModel):
     name : str
     desc : str
     image_link : str
-    volume : Optional[float] = None
-    weight : Optional[float] = None
-    price : float
-    stock : int
+    type : int
+    details : list
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -176,6 +174,7 @@ def getAllItems():
     Grocery_items = []
     table_name = ""
     for i in items:
+        details = []
         if i[3] == 1:
             table_name = "items_weight"
         elif i[3] == 2:
@@ -183,15 +182,17 @@ def getAllItems():
         cur.execute(f"SELECT * FROM {table_name} WHERE Item_ID = {i[0]}")
         det = cur.fetchall()
         for j in det:
-            if i[3] == 1:
-                Grocery_items.append(GroceryItem(id = j[0] , name = i[1] , desc = i[2] , image_link = i[-1] , weight = j[1] , price = j[2] , stock = j[3]))
-            elif i[3] == 2:
-                Grocery_items.append(GroceryItem(id = j[0] , name = i[1] , desc = i[2] , image_link = i[-1] , volume = j[1] , price = j[2] , stock = j[3]))
+            details.append([j[1] , j[2] , j[3]])
+        if i[3] == 1:
+            Grocery_items.append(GroceryItem(id = j[0] , name = i[1] , desc = i[2] , image_link = i[-1] , type = 1 , details = details))
+        elif i[3] == 2:
+            Grocery_items.append(GroceryItem(id = j[0] , name = i[1] , desc = i[2] , image_link = i[-1] , type = 2 , details = details))
 
     return Grocery_items * 5
 
 @app.get("/getItem/{id}" , response_model=GroceryItem)
 def getItemByID(id):
+    details = []
     cur.execute(f"SELECT * FROM Items WHERE Item_ID = {id};")
     i = cur.fetchone()
     if i is None:
@@ -206,10 +207,11 @@ def getItemByID(id):
     cur.execute(f"SELECT * FROM {table_name} WHERE Item_ID = {i[0]}")
     det = cur.fetchall()
     for j in det:
-        if i[3] == 1:
-            return GroceryItem(id=j[0], name=i[1], desc=i[2], image_link=i[-1], weight=j[1], price=j[2], stock=j[3])
-        elif i[3] == 2:
-            return GroceryItem(id=j[0], name=i[1], desc=i[2], image_link=i[-1], volume=j[1], price=j[2], stock=j[3])
+        details.append([j[1], j[2], j[3]])
+    if i[3] == 1:
+        return GroceryItem(id=j[0], name=i[1], desc=i[2], image_link=i[-1], type=1, details=details)
+    elif i[3] == 2:
+        return GroceryItem(id=j[0], name=i[1], desc=i[2], image_link=i[-1], type=2, details=details)
 
 
 
