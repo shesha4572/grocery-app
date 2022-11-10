@@ -2,6 +2,7 @@ import './LoginPage.css';
 import axios from "axios";
 import React from "react";
 import {Button, Input, TextField} from "@mui/material";
+import {Cookies} from "react-cookie";
 
 class LoginPage extends React.Component {
 
@@ -47,7 +48,7 @@ class LoginPage extends React.Component {
         axios.post("http://localhost:8000/token", new FormData(document.getElementById("login-form"))).then(res => {
             this.setState({jwt: res.data})
             return axios.get("http://localhost:8000/users/me", {headers: {"Authorization": `Bearer ${res.data.access_token}`}})
-        }).then(res => this.setState({User: res.data}))
+        }).then(res => {this.setState({User: res.data}); console.log(res.data); res.status === 200 ? new Cookies().set("full_name" , res.data.full_name) : new Cookies()})
     }
 }
 export default LoginPage

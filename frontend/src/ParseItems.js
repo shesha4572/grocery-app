@@ -1,4 +1,4 @@
-import {Button, ButtonBase, Grid, MenuItem, Select, TextField, Typography} from "@mui/material";
+import {Button, ButtonBase, Grid, MenuItem, TextField, Typography} from "@mui/material";
 
 import React from "react";
 
@@ -39,7 +39,6 @@ class ParseItems extends React.Component{
     render() {
         const unit = this.state.item.type === 1 ? "Kg" : "L"
         const text = this.state.item.type === 1 ? "Weight" : "Volume"
-        console.log(this.state.item.name)
         return (
             <Grid item container xs={12} margin={"5px"} style={{
                 padding: "20px 20px 20px 200px",

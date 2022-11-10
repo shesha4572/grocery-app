@@ -213,6 +213,27 @@ def getItemByID(id):
     elif i[3] == 2:
         return GroceryItem(id=j[0], name=i[1], desc=i[2], image_link=i[-1], type=2, details=details)
 
+@app.get("/searchItem{word}")
+def getSearchResults(word):
+    cur.execute(f"SELECT * FROM Items WHERE Name LIKE '%{word}%';")
+    items = cur.fetchall()
+    Grocery_items = []
+    table_name = ""
+    for i in items:
+        details = []
+        if i[3] == 1:
+            table_name = "items_weight"
+        elif i[3] == 2:
+            table_name = "items_volume"
+        cur.execute(f"SELECT * FROM {table_name} WHERE Item_ID = {i[0]}")
+        det = cur.fetchall()
+        for j in det:
+            details.append([j[1], j[2], j[3]])
+        if i[3] == 1:
+            Grocery_items.append(GroceryItem(id=j[0], name=i[1], desc=i[2], image_link=i[-1], type=1, details=details))
+        elif i[3] == 2:
+            Grocery_items.append(GroceryItem(id=j[0], name=i[1], desc=i[2], image_link=i[-1], type=2, details=details))
+    return Grocery_items
 
 
 if __name__ == "__main__":
