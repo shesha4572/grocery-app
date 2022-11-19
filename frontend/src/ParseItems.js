@@ -1,6 +1,7 @@
 import {Button, ButtonBase, Grid, MenuItem, TextField, Typography} from "@mui/material";
 
 import React from "react";
+import {Cookies} from "react-cookie";
 
 class ParseItems extends React.Component{
 
@@ -15,14 +16,15 @@ class ParseItems extends React.Component{
         },
         price : 0,
         stock : 0,
-        qty : 0
+        qty : 1,
+        selected_type : 0
     }
 
     state = this.initialState
 
 
     componentDidMount() {
-        this.setState({item : this.props.item , price : this.props.item.details[0][1] , stock : this.props.item.details[0][2]})
+        this.setState({item : this.props.item , price : this.props.item.details[0][1] , stock : this.props.item.details[0][2] , selected_type : this.props.item.details[0][0]})
     }
 
 
@@ -34,6 +36,19 @@ class ParseItems extends React.Component{
                 stock: this.props.item.details[0][2]
             })
         }
+    }
+
+    AddToCartHandler = () => {
+        const cookie = new Cookies();
+        const cart = cookie.get("cart");
+        cookie.remove("cart");
+        if(Object.keys(cart).includes(`${this.state.item.id}`)){
+            cart[this.state.item.id].push({"type" : this.state.selected_type , "qty" : this.state.qty})
+        }
+        else{
+            cart[this.state.item.id] = [{"type": this.state.selected_type, "qty": this.state.qty}];
+        }
+        cookie.set("cart" , cart);
     }
 
     render() {
@@ -52,7 +67,7 @@ class ParseItems extends React.Component{
                     </ButtonBase> <br/><br/>
                     <Grid>
                         <Button variant={"contained"} color={"warning"} size={"large"}  disabled={this.state.stock === 0} fullWidth
-                                sx={{p: 2, borderRadius: 25}}>Add to Cart</Button> <br/><br/>
+                                sx={{p: 2, borderRadius: 25}} onClick={this.AddToCartHandler}>Add to Cart</Button> <br/><br/>
                         <Button
                         variant={"contained"} color={"success"} size={"large"}  disabled={this.state.stock === 0} fullWidth
                         sx={{p: 2, borderRadius: 25}}>Buy Now</Button>
@@ -79,7 +94,7 @@ class ParseItems extends React.Component{
                     </Grid>
                     <Grid item>
 
-                        <TextField select id="weight-volume-selector" defaultValue={0} label = {text} color={"secondary"} onChange={e => this.setState({price : this.state.item.details[e.target.value][1] , stock : this.state.item.details[e.target.value][2]})} sx = {{padding : "10px 10px 10px 10px"}}>
+                        <TextField select id="weight-volume-selector" defaultValue={0} label = {text} color={"secondary"} onChange={e => this.setState({price : this.state.item.details[e.target.value][1] , stock : this.state.item.details[e.target.value][2] , selected_type : this.state.item.details[e.target.value][0]})} sx = {{padding : "10px 10px 10px 10px"}}>
                             {this.state.item.details.map((el, ind) => <MenuItem value={ind}> {el[0]} {unit} </MenuItem>)}
                         </TextField> <span></span><span></span>
                         <TextField select id = "qty-selector" defaultValue={1} label={"Qty"} onChange={e => this.setState({qty : e.target.value})} sx = {{padding : "10px 10px 10px 10px"}} color={"secondary"}>

@@ -1,3 +1,4 @@
+import asyncio
 from datetime import datetime, timedelta
 from typing import Optional
 from fastapi import Depends, FastAPI, HTTPException, status, Form
@@ -17,7 +18,8 @@ app = FastAPI(debug = True)
 app.add_middleware(CORSMiddleware , allow_origins = ["http://localhost:3000"] , allow_credentials = True , allow_headers = ['*'])
 SECRET_KEY = "efd1a9ccdb325278a5b2d8183d3bf005a17bab75609ff4fc90e83f75ef9ec617"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 60
+CHECK = True
 
 
 class Token(BaseModel):
@@ -54,6 +56,13 @@ class GroceryItem(BaseModel):
     type : int
     details : list
 
+class CartItem(BaseModel):
+    id : int
+    name : str
+    image_link : str
+    type : int
+    qty : float
+    price : float
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -131,6 +140,30 @@ def create_cust_in_db(name , gender , email_id , username , password ):
     cur.execute(f"INSERT INTO Customer(Name , Gender , Email_ID , Username , Hashed_pass) VALUES('{name}' , '{gender}' , '{email_id}' , '{username}' ,'{hashed}')")
     db.commit()
 
+
+async def cancel_reservations():
+    cur.execute("SELECT * FROM item_reservation WHERE TIMESTAMPDIFF(MINUTE , time_reserved , CURRENT_TIMESTAMP) > 15;")
+    det = cur.fetchall()
+    for i in det:
+        cur.execute("")
+
+
+async def cron_job_cancel_reservations():
+    while CHECK:
+        await asyncio.gather(
+            asyncio.sleep(5),
+            cancel_reservations()
+        )
+
+
+@app.on_event("startup")
+async def start_cron():
+    asyncio.create_task(cron_job_cancel_reservations())
+
+@app.on_event("shutdown")
+def shutdown():
+    CHECK = False
+
 @app.post("/token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     user = authenticate_user(form_data.username, form_data.password)
@@ -190,11 +223,12 @@ def getAllItems():
 
     return Grocery_items
 
-@app.get("/getItem/{id}" , response_model=GroceryItem)
-def getItemByID(id):
-    details = []
+@app.get("/getItem/{id}{qty}" , response_model=CartItem)
+def getItemByID(id , qty):
     cur.execute(f"SELECT * FROM Items WHERE Item_ID = {id};")
     i = cur.fetchone()
+    table_name = ""
+    type = ""
     if i is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -202,16 +236,14 @@ def getItemByID(id):
         )
     if i[3] == 1:
         table_name = "items_weight"
+        type = "Weight"
     elif i[3] == 2:
         table_name = "items_volume"
-    cur.execute(f"SELECT * FROM {table_name} WHERE Item_ID = {i[0]}")
-    det = cur.fetchall()
-    for j in det:
-        details.append([j[1], j[2], j[3]])
-    if i[3] == 1:
-        return GroceryItem(id=j[0], name=i[1], desc=i[2], image_link=i[-1], type=1, details=details)
-    elif i[3] == 2:
-        return GroceryItem(id=j[0], name=i[1], desc=i[2], image_link=i[-1], type=2, details=details)
+        type = "Volume"
+    cur.execute(f"SELECT Price FROM {table_name} WHERE Item_ID = {i[0]} AND {type} = {qty};")
+    det = cur.fetchone()
+    print(det)
+    return CartItem(id = i[0] , name=i[1], desc=i[2], image_link=i[-1], type=i[3], qty = qty , price = det[0])
 
 @app.get("/searchItem{word}")
 def getSearchResults(word):
@@ -235,7 +267,23 @@ def getSearchResults(word):
             Grocery_items.append(GroceryItem(id=j[0], name=i[1], desc=i[2], image_link=i[-1], type=2, details=details))
     return Grocery_items
 
+@app.post("/reserveItem")
+def reserveItem(item_id : int , item_type : float , item_qty : float , token : str , type : int):
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    username = payload.get("sub")
+    cur.execute(f"SELECT Cust_ID FROM Customer WHERE Username LIKE '{username}';")
+    user_id = cur.fetchone()[0]
+    cur.execute(f"INSERT INTO item_reservation(Cust_ID, Item_ID, Item_type, Item_qty) VALUES ({user_id} , {item_id} , {item_type} , {item_qty});")
+    if type == 1:
+        cur.execute(f"UPDATE items_weight SET Stock = Stock - {item_qty} WHERE Item_ID = {item_id} AND Weight = {item_type};")
+    else:
+        cur.execute(f"UPDATE items_volume SET Stock = Stock - {item_qty} WHERE Item_ID = {item_id} AND Volume = {item_type};")
+    db.commit()
+
+
+
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app)
+

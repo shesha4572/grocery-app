@@ -49,6 +49,7 @@ class LoginPage extends React.Component {
             this.setState({jwt: res.data})
             return axios.get("http://localhost:8000/users/me", {headers: {"Authorization": `Bearer ${res.data.access_token}`}})
         }).then(res => {this.setState({User: res.data}); console.log(res.data); res.status === 200 ? new Cookies().set("full_name" , res.data.full_name) : new Cookies()})
+        new Cookies().set("cart" , {});
     }
 }
 export default LoginPage
