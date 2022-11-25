@@ -61,8 +61,10 @@ class CartItem(BaseModel):
     name : str
     image_link : str
     type : int
+    type_qty : float
     qty : float
     price : float
+    stock_available : int
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -145,13 +147,18 @@ async def cancel_reservations():
     cur.execute("SELECT * FROM item_reservation WHERE TIMESTAMPDIFF(MINUTE , time_reserved , CURRENT_TIMESTAMP) > 15;")
     det = cur.fetchall()
     for i in det:
-        cur.execute("")
-
-
+        cur.execute(f"SELECT type FROM Items WHERE Item_ID = {i[1]}")
+        t = cur.fetchone()[0]
+        if t == 1:
+            cur.execute(f"UPDATE items_weight SET Stock = Stock + {i[3]} WHERE Item_ID = {i[1]} AND Weight = {i[2]};")
+        else:
+            cur.execute(f"UPDATE items_volume SET Stock = Stock + {i[3]} WHERE Item_ID = {i[1]} AND Volume = {i[2]};")
+        cur.execute(f"DELETE FROM item_reservation WHERE Cust_ID = {i[0]};")
+    db.commit()
 async def cron_job_cancel_reservations():
     while CHECK:
         await asyncio.gather(
-            asyncio.sleep(5),
+            asyncio.sleep(100),
             cancel_reservations()
         )
 
@@ -268,19 +275,47 @@ def getSearchResults(word):
     return Grocery_items
 
 @app.post("/reserveItem")
-def reserveItem(item_id : int , item_type : float , item_qty : float , token : str , type : int):
+def reserveItem(item_id : int = Form(...) , item_type : float = Form(...)  , item_qty : int = Form(...)  , token : str = Form(...)  , type : int = Form(...)):
     payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     username = payload.get("sub")
     cur.execute(f"SELECT Cust_ID FROM Customer WHERE Username LIKE '{username}';")
     user_id = cur.fetchone()[0]
-    cur.execute(f"INSERT INTO item_reservation(Cust_ID, Item_ID, Item_type, Item_qty) VALUES ({user_id} , {item_id} , {item_type} , {item_qty});")
-    if type == 1:
-        cur.execute(f"UPDATE items_weight SET Stock = Stock - {item_qty} WHERE Item_ID = {item_id} AND Weight = {item_type};")
+    cur.execute(f"SELECT * FROM item_reservation WHERE Cust_ID = {user_id} AND Item_ID = {item_id} AND Item_type = {item_type}")
+    res = cur.fetchone()
+    old_qty = 0
+    if res is not None:
+        old_qty = res[3]
+        cur.execute(f"UPDATE item_reservation SET Item_qty = {item_qty};")
     else:
-        cur.execute(f"UPDATE items_volume SET Stock = Stock - {item_qty} WHERE Item_ID = {item_id} AND Volume = {item_type};")
+        cur.execute(f"INSERT INTO item_reservation(Cust_ID, Item_ID, Item_type, Item_qty) VALUES ({user_id} , {item_id} , {item_type} , {item_qty});")
+    if type == 1:
+        cur.execute(f"UPDATE items_weight SET Stock = Stock - {item_qty - old_qty} WHERE Item_ID = {item_id} AND Weight = {item_type};")
+    else:
+        cur.execute(f"UPDATE items_volume SET Stock = Stock - {item_qty - old_qty} WHERE Item_ID = {item_id} AND Volume = {item_type};")
     db.commit()
 
 
+@app.get("/getCart/{token}")
+def getCartItems(token : str):
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    username = payload.get("sub")
+    cur.execute(f"SELECT Cust_ID FROM Customer WHERE Username LIKE '{username}';")
+    user_id = cur.fetchone()[0]
+    cur.execute(f"SELECT * FROM item_reservation WHERE Cust_ID = {user_id}")
+    det = cur.fetchall()
+    items = []
+    for i in det:
+        cur.execute(f"SELECT name , image_link , type FROM Items WHERE Item_ID = {i[1]}")
+        item_details = cur.fetchone()
+        item_price_stock = []
+        if item_details[2] == 1:
+            cur.execute(f"SELECT Price , Stock FROM items_weight WHERE Item_ID = {i[1]} AND Weight = {i[2]}")
+            item_price_stock = cur.fetchone()
+        else:
+            cur.execute(f"SELECT Price , Stock FROM items_volume WHERE Item_ID = {i[1]} AND Volume = {i[2]}")
+            item_price_stock = cur.fetchone()
+        items.append(CartItem(id = i[1] , name = item_details[0] , image_link = item_details[1] , type = item_details[2] , type_qty = i[2] , qty = i[3] , price = item_price_stock[0] , stock_available = item_price_stock[1]))
+    return items
 
 
 if __name__ == "__main__":

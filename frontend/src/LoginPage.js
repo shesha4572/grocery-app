@@ -2,9 +2,6 @@ import './LoginPage.css';
 import axios from "axios";
 import React from "react";
 import a from "./a.png";
-import email from "./email.jpg";
-import login from "./login.jpg"
-import pass from "./pass.png";
 import {Avatar, Button, Grid, Input, InputAdornment, Link, Paper, TextField, Typography} from "@mui/material";
 import {Cookies} from "react-cookie";
 import LockIcon from '@mui/icons-material/Lock';

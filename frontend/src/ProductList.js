@@ -6,7 +6,6 @@ import ParseItems from "./ParseItems";
 import {Cookies} from "react-cookie";
 
 
-
 class ProductList extends React.Component{
     initialState = {
         items : [],

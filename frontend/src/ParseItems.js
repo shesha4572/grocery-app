@@ -2,6 +2,7 @@ import {Button, ButtonBase, Grid, MenuItem, TextField, Typography} from "@mui/ma
 
 import React from "react";
 import {Cookies} from "react-cookie";
+import axios from "axios";
 
 class ParseItems extends React.Component{
 
@@ -39,16 +40,13 @@ class ParseItems extends React.Component{
     }
 
     AddToCartHandler = () => {
-        const cookie = new Cookies();
-        const cart = cookie.get("cart");
-        cookie.remove("cart");
-        if(Object.keys(cart).includes(`${this.state.item.id}`)){
-            cart[this.state.item.id].push({"type" : this.state.selected_type , "qty" : this.state.qty})
-        }
-        else{
-            cart[this.state.item.id] = [{"type": this.state.selected_type, "qty": this.state.qty}];
-        }
-        cookie.set("cart" , cart);
+        const form = new FormData()
+        form.set("item_id" , this.state.item.id)
+        form.set("item_qty" , this.state.qty)
+        form.set("item_type" , this.state.selected_type)
+        form.set("token" , new Cookies().get("jwt"))
+        form.set("type" , this.state.item.type)
+        axios.post("http://localhost:8000/reserveItem" , form).then(res => console.log(res.status))
     }
 
     render() {
@@ -98,7 +96,7 @@ class ParseItems extends React.Component{
                             {this.state.item.details.map((el, ind) => <MenuItem value={ind}> {el[0]} {unit} </MenuItem>)}
                         </TextField> <span></span><span></span>
                         <TextField select id = "qty-selector" defaultValue={1} label={"Qty"} onChange={e => this.setState({qty : e.target.value})} sx = {{padding : "10px 10px 10px 10px"}} color={"secondary"}>
-                            {Array(10).fill(0).map((el , index) => <MenuItem value={index + 1}> {index + 1} </MenuItem>)}
+                            {Array(10 > this.state.stock ? this.state.stock : 10).fill(0).map((el , index) => <MenuItem value={index + 1}> {index + 1} </MenuItem>)}
                         </TextField>
                         <Typography variant="h6" component="div">
                             <b> Rs. {this.state.price.toFixed(2)} </b>
