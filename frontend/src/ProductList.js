@@ -45,7 +45,7 @@ class ProductList extends React.Component{
                         <Grid container={true} xs> <img src={logo} className={"logo"}/> </Grid>
                         <Grid item xs = {9}> <TextField id = "search-input" fullWidth={true}  margin={"dense"} placeholder={"Search"} variant='outlined'/> </Grid>
                         <Grid item xs> <Button id = "search-button" onClick={this.handleSearch} variant={"contained"} style={{padding : "20px 20px 20px 20px"}}> Search </Button> </Grid>
-                        <Grid item xs> <Typography paddingTop={3}> <b>{this.userCheck()} </b></Typography> </Grid>
+                        <Grid item xs > <Typography paddingTop={2}> <b>{this.userCheck()} </b></Typography> </Grid>
                             </Grid>
                     </div>
                     <Typography color={"error.main"} alignItems={"center"}>No items Found! Please Check your Search Phrase and Try again </Typography>
@@ -60,7 +60,7 @@ class ProductList extends React.Component{
                         <Grid container={true} xs> <img src={logo} className={"logo"}/> </Grid>
                         <Grid item xs = {9}> <TextField id = "search-input" fullWidth={true}  margin={"dense"} placeholder={"Search"} variant='outlined'/> </Grid>
                         <Grid item xs> <Button id = "search-button" onClick={this.handleSearch} variant={"contained"} style={{padding : "20px 20px 20px 20px"}}> Search </Button> </Grid>
-                        <Grid item xs> <Typography paddingTop={3}> <b>{this.userCheck()} </b></Typography> </Grid>
+                        <Grid item xs> <Typography paddingTop={2}> <b>{this.userCheck()} </b></Typography> </Grid>
                             </Grid>
                     </div>
                         <Grid container padding={"20px 20px 20px 20px"}>
