@@ -4,9 +4,6 @@ import React from "react";
 import a from "./a.png";
 import {Avatar, Button, Grid, Input, InputAdornment, Link, Paper, TextField, Typography} from "@mui/material";
 import {Cookies} from "react-cookie";
-import LockIcon from '@mui/icons-material/Lock';
-import logo from "./logo.jpg";
-import EmailIcon from '@mui/icons-material/Email';
 import PersonIcon from '@mui/icons-material/Person';
 import KeyIcon from '@mui/icons-material/Key';
 class LoginPage extends React.Component {
@@ -31,8 +28,8 @@ class LoginPage extends React.Component {
         const bustyle = {
             width: 320,
             height: 50,
-            borderRadius: '60',
-            backgroundColor: 'rgba(3, 53, 252, 0.77)',
+            borderRadius: '25px',
+            backgroundColor: 'rgba(169,3,252,0.77)',
             color: 'white',
             fontsize: '35px',
             border: 'none'

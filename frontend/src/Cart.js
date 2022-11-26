@@ -36,14 +36,14 @@ class CartView extends React.Component{
     render() {
         return(
             <div>
-                <div className ="navbar">
+                <div className ="navbar" style={{width:'93%'}}>
                         <Grid container xs spacing={3}>
                         <Grid container={true} xs> <img src={logo} className={"logo"}/> </Grid>
-                        <Grid item xs = {9}> <TextField id = "search-input" fullWidth={true}  margin={"dense"} placeholder={"Search"} variant='outlined'/> </Grid>
-                        <Grid item xs> <Button id = "search-button" onClick={this.handleSearch} variant={"contained"} style={{padding : "20px 20px 20px 20px"}}> Search </Button> </Grid>
-                        <Grid item xs> <Typography paddingTop={3}> <b>{this.userCheck()} </b></Typography> </Grid>
-                            <Grid item xs><Badge  badgeContent={this.state.items.length} color="primary"><ShoppingCartIcon style={{scale : "250%"}}/></Badge></Grid>
-                            </Grid>
+                        <Grid item xs = {9}> <TextField id = "search-input" fullWidth={true} margin={"dense"} placeholder={"Search"} variant='outlined'/> </Grid>
+                        <Grid item xs> <Button id = "search-button" onClick={this.handleSearch} variant={"contained"} style={{borderRadius:'15px',padding : "20px 20px 20px 20px"}}> Search </Button></Grid>
+                            <Grid item xs><Badge  badgeContent={this.state.items.length} color="primary"><ShoppingCartIcon style={{scale : "200%",paddingTop:'10px'}}/></Badge> </Grid>
+                            <Grid item xs> <Typography paddingTop={0.75}> <b>{this.userCheck()} </b></Typography> </Grid>
+                        </Grid>
                     </div>
                 <Typography align={"center"} variant={"h3"}>Cart</Typography>
                 {this.state.items.map(el => <CartItemParse item = {el}/>)}

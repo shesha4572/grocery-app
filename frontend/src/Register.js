@@ -11,35 +11,48 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import PersonIcon from "@mui/icons-material/Person";
-
+function checkPassword(){
+}
 export const Register=()=> {
-    const styles = {
-        paperContainer: {
-            padding: '30px 20px', width: 300, margin: "auto",borderRadius:'25px'
-        }
-    };
     const bstyles = {
         paperContainer: {
             backgroundSize: 'cover',
             backgroundPosition: 'cover',
             width:'100%',
-            height:'100vh',
+            height:'77vh',
         }
     };
-
-    const Headerstyle = {margin: 0}
+    const Headerstyle = {marginTop:0}
     const backstyle = {backgroundColor: 'green'}
     const marginTop={marginTop:7}
-    const paperstyle = {padding:20,height:'50vh',width:280,margin:"20px auto",borderRadius:'25px'};
+    const paperstyle = {padding:35,height:'55vh',width:300,margin:"20px auto",borderRadius:'25px',backgroundColor:'rgba(217, 235, 238, 0.57)'};
     function handleSubmit(){
+        let password=document.getElementById("password").value;
+        let cPassword=document.getElementById("cnfrm-password").value;
         const form = new FormData()
         form.set("username" , username)
         form.set("email" , email)
         form.set("password" , password)
         form.set("gender" , gender)
         form.set("full_name" , Name)
-        axios.post("http://localhost:8000/createUser/" , form).then(res => console.log(res.data))
+        let message=document.getElementById("message");
+        if(password.length!==0){
+            if(password===cPassword){
+                message.textContent="";
+                axios.post("http://localhost:8000/createUser/" , form).then(res => console.log(res.data))
+            }
+            else{
+                message.textContent="Passwords don't match";
+                message.style.backgroundColor="#ff4d4d";
+            }
+        }
+        else{
+            alert("Password can't be empty!");
+            message.textContent="";
+        }
+        console.log(password,cPassword);
         console.log(Name , email , password , confirmPass , username , gender)
+
     }
 
     const [confirmPass , setConfirmPass] = useState("")
@@ -49,6 +62,7 @@ export const Register=()=> {
     const [gender , setGender] = useState("M")
     const [username , setUsername] = useState("")
     return (
+        <div className={'SignUp'}>
         <Grid  style={bstyles.paperContainer}>
             <Paper elevation={20} style={paperstyle}>
                 <Grid align="center">
@@ -61,8 +75,8 @@ export const Register=()=> {
                 </Grid>
                 <form>
                     <TextField fullWidth label='Name' placeholder="Enter your name" variant='standard' onChange={e => setName(e.target.value)}/>
-                    <TextField fullWidth label='Email' placeholder="Enter your email" variant='standard' onChange={e => setEmail(e.target.value)}/>
-                    <FormControl fullWidth>
+                    <TextField fullWidth label='Email'style={{padding:'4px'}} placeholder="Enter your email" variant='standard' onChange={e => setEmail(e.target.value)}/>
+                    <FormControl fullWidth style={{padding:'4px'}}>
                         <InputLabel variant="standard" htmlFor="uncontrolled-native">
                             Gender
                         </InputLabel>
@@ -77,15 +91,17 @@ export const Register=()=> {
                             <option value={"Female"}>Female</option>
                         </NativeSelect>
                     </FormControl>
-                    <TextField fullWidth label='Username' placeholder="Enter your username"
+                    <TextField fullWidth label='Username'  style={{padding:'4px'}}placeholder="Enter your username"
                                variant='standard' onChange={e => setUsername(e.target.value)}/>
-                    <TextField fullWidth label='Password' type={"password"} placeholder="Enter your password" variant='standard' onChange={e => setPassword(e.target.value)}/>
-                    <TextField fullWidth label='Confirm Password' type={"password"} placeholder="Please confirm your password"
+                    <TextField fullWidth id="password" label='Password' style={{padding:'4px'}} type={"password"} placeholder="Enter your password" variant='standard' onChange={e => setPassword(e.target.value)}/>
+                    <TextField fullWidth id="cnfrm-password" label='Confirm Password'style={{padding:'4px'}} type={"password"} placeholder="Please confirm your password"
                                variant='standard' onChange={e => setConfirmPass(e.target.value)}/>
-                    <Button variant='contained' style={marginTop} color='primary' onClick={handleSubmit}>Sign Up</Button>
+                    <p id={"message"}></p>
+                    <Button variant='contained' style={{padding:'4px',marginTop:'8px',width:'50%',borderRadius:'25px',fontWeight:'600'}} color='primary' onClick={handleSubmit}>Sign Up</Button>
                 </form>
             </Paper>
         </Grid>
+        </div>
 
 
     )

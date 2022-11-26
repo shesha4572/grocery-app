@@ -4,7 +4,16 @@
     min-height: 100vh;
     align-items: center;
     justify-content: center;
-    color: white;
-    background-image: linear-gradient(79deg, #7439db, #C66FBC 48%, #F7944D),url("https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.istockphoto.com%2Fphotos%2Fsupermarket&psig=AOvVaw013gZrDnuF1cqRdIepP6an&ust=1668178285816000&source=images&cd=vfe&ved=0CA8QjRxqFwoTCKi82MLuo_sCFQAAAAAdAAAAABAE");
-
+    color: rgba(255, 255, 255, 0.59);
+}
+.SignUp{
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    padding-top: 100px;
+    padding-bottom: 90px;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('./login.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 77vh;
 }

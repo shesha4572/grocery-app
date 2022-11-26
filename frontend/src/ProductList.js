@@ -27,7 +27,7 @@ class ProductList extends React.Component{
     userCheck = () => {
         const cookies = new Cookies()
         const name = cookies.get("full_name")
-        return !name  ?  "Hello, Guest" : `Hello, ${name}`
+        return !name  ?  "Hello, Guest" : `Hello, ${name.split()[0]}`
     };
 
     componentDidMount() {
