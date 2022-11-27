@@ -11,11 +11,11 @@ import mysql.connector
 
 
 db = mysql.connector.connect(user = "root" , password = "root" , host = "localhost");
-cur = db.cursor()
+cur = db.cursor(buffered=True)
 cur.execute("USE grocery_shop_management;")
 
 app = FastAPI(debug = True)
-app.add_middleware(CORSMiddleware , allow_origins = ["http://localhost:3000"] , allow_credentials = True , allow_headers = ['*'])
+app.add_middleware(CORSMiddleware , allow_origins = ["http://localhost:3000"] , allow_credentials = True , allow_headers = ['*'] , allow_methods = ['*'])
 SECRET_KEY = "efd1a9ccdb325278a5b2d8183d3bf005a17bab75609ff4fc90e83f75ef9ec617"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
@@ -285,7 +285,7 @@ def reserveItem(item_id : int = Form(...) , item_type : float = Form(...)  , ite
     old_qty = 0
     if res is not None:
         old_qty = res[3]
-        cur.execute(f"UPDATE item_reservation SET Item_qty = {item_qty};")
+        cur.execute(f"UPDATE item_reservation SET Item_qty = {item_qty} WHERE Item_ID = {item_id} AND Item_type = {item_type};")
     else:
         cur.execute(f"INSERT INTO item_reservation(Cust_ID, Item_ID, Item_type, Item_qty) VALUES ({user_id} , {item_id} , {item_type} , {item_qty});")
     if type == 1:
@@ -317,6 +317,18 @@ def getCartItems(token : str):
         items.append(CartItem(id = i[1] , name = item_details[0] , image_link = item_details[1] , type = item_details[2] , type_qty = i[2] , qty = i[3] , price = item_price_stock[0] , stock_available = item_price_stock[1]))
     return items
 
+@app.post("/deleteFromCart")
+def deleteItemFromCart(item_id : int = Form(...) , item_type : float = Form(...)  , item_qty : int = Form(...)  , token : str = Form(...)  , type : int = Form(...)):
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    username = payload.get("sub")
+    cur.execute(f"SELECT Cust_ID FROM Customer WHERE Username LIKE '{username}';")
+    user_id = cur.fetchone()[0]
+    cur.execute(f"DELETE FROM item_reservation WHERE Cust_ID = {user_id} AND Item_ID = {item_id} AND Item_type = {item_type};")
+    if type == 1:
+        cur.execute(f"UPDATE items_weight SET Stock = Stock + {item_qty} WHERE Item_ID = {item_id} AND Weight = {item_type}")
+    else:
+        cur.execute(f"UPDATE items_volume SET Stock = Stock + {item_qty} WHERE Item_ID = {item_id} AND Volume = {item_type}")
+    db.commit()
 
 if __name__ == "__main__":
     import uvicorn

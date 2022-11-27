@@ -7,12 +7,10 @@ import {
     Typography,
     Button,
     NativeSelect,
-    TextField, InputLabel, FormControl, Input, InputAdornment
+    TextField, InputLabel, FormControl
 } from "@mui/material";
 import axios from "axios";
-import PersonIcon from "@mui/icons-material/Person";
-function checkPassword(){
-}
+
 export const Register=()=> {
     const bstyles = {
         paperContainer: {
@@ -24,7 +22,6 @@ export const Register=()=> {
     };
     const Headerstyle = {marginTop:0}
     const backstyle = {backgroundColor: 'green'}
-    const marginTop={marginTop:7}
     const paperstyle = {padding:35,height:'55vh',width:300,margin:"20px auto",borderRadius:'25px',backgroundColor:'rgba(217, 235, 238, 0.57)'};
     function handleSubmit(){
         let password=document.getElementById("password").value;

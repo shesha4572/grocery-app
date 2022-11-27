@@ -2,10 +2,11 @@ import './LoginPage.css';
 import axios from "axios";
 import React from "react";
 import a from "./a.png";
-import {Avatar, Button, Grid, Input, InputAdornment, Link, Paper, TextField, Typography} from "@mui/material";
+import {Button, Input, InputAdornment} from "@mui/material";
 import {Cookies} from "react-cookie";
 import PersonIcon from '@mui/icons-material/Person';
 import KeyIcon from '@mui/icons-material/Key';
+import {Navigate} from "react-router-dom";
 class LoginPage extends React.Component {
 
     initialState = {
@@ -19,7 +20,9 @@ class LoginPage extends React.Component {
         jwt: {
             access_token: "",
             token_type: ""
-        }
+        },
+
+        redirect : false
     }
 
     state = this.initialState
@@ -34,9 +37,6 @@ class LoginPage extends React.Component {
             fontsize: '35px',
             border: 'none'
         }
-        const avatarStyle = {backgroundColor: '#1bbd7e', margin: '8px 0'}
-        const paperstyle = {padding: 20, height: '50vh', width: 280, margin: "20px auto", borderRadius: '25px'};
-        const bstyle = {margin: '8px 0'};
         const istyle = {
             width: '300',
             height: '50px',
@@ -45,6 +45,11 @@ class LoginPage extends React.Component {
             outline: 'none',
             backgroundcolor: '#fff'
         }
+
+        if(this.state.redirect){
+            return <Navigate to={"/allItems"}/>
+        }
+
         return (
             <div>
                 <div className="main">
@@ -90,13 +95,34 @@ class LoginPage extends React.Component {
     }
     LoginSubmit = async() => {
         const cookie = new Cookies();
-        axios.post("http://localhost:8000/token", new FormData(document.getElementById("login-form"))).then(res => {
-            this.setState({jwt: res.data})
-            cookie.set("jwt" , res.data.access_token)
-            cookie.set("cart" , {})
-            return axios.get("http://localhost:8000/users/me", {headers: {"Authorization": `Bearer ${res.data.access_token}`}})
-        }).then(res => {this.setState({User: res.data}); console.log(res.data); res.status === 200 ? cookie.set("full_name" , res.data.full_name) : new Cookies()})
-    }
+            axios.post("http://localhost:8000/token", new FormData(document.getElementById("login-form")))
+                .then(res => {
+                    if (res.status === 200) {
+                        this.setState({jwt: res.data})
+                        cookie.set("jwt", res.data.access_token, {maxAge: 60 * 60})
+                        cookie.set("cart", {})
+                        return axios.get("http://localhost:8000/users/me", {headers: {"Authorization": `Bearer ${res.data.access_token}`}})
+                    }
+                })
+                .then(res => {
+                    if (res.status === 200) {
+                        cookie.set("full_name", res.data.full_name, {maxAge: 60 * 60});
+                        alert("Login Successful");
+                        this.setState({User: res.data, redirect: true});
+                        console.log(res.data);
+                    }
+                })
+                .catch(error => {
+                    if(error.response.status === 401){
+                    alert("Username or password is Incorrect");
+                    }
+
+                    else if(error.response.status === 422){
+                        alert("Please enter both username and password")
+                    }
+                })
+
+        }
 }
 
 export default LoginPage

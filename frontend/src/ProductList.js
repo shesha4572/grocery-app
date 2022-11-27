@@ -1,29 +1,30 @@
 import React  from "react";
 import axios from "axios";
-import {Button, Grid, TextField, Typography} from "@mui/material";
+import {Badge, Button, Grid, TextField, Typography, Link, iconClasses} from "@mui/material";
 import logo from "./logo.jpg";
 import ParseItems from "./ParseItems";
 import {Cookies} from "react-cookie";
-
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 class ProductList extends React.Component{
     initialState = {
         items : [],
         length : 0,
         page_num : 0,
-        total_pages : 0
+        total_pages : 0,
     }
 
     state = this.initialState
 
     handleSearch = () => {
-        const inp = document.getElementById("search-input").value
-        console.log(inp , "in")
+        let inp = document.getElementById("search-input").value
         if(inp === ""){
             this.componentDidMount()
+            return
         }
         axios.get(`http://localhost:8000/searchItem${inp}`).then(res => this.setState({items : res.data , length : res.data.length , total_pages : Math.ceil(res.data.length / 10) , page_num : 1}))
     }
+
     userCheck = () => {
         const cookies = new Cookies()
         const name = cookies.get("full_name")
@@ -31,8 +32,21 @@ class ProductList extends React.Component{
     };
 
     componentDidMount() {
-        axios.get("http://localhost:8000/getAllItems").then(res => this.setState({items : res.data , length : res.data.length , total_pages : Math.ceil(res.data.length / 10) , page_num : 1}))
-    }
+        const cookie = new Cookies()
+        const inp = cookie.get("cart-search")
+        console.log(inp)
+        if(inp !== undefined){
+            axios.get(`http://localhost:8000/searchItem${inp}`).then(res => this.setState({items : res.data , length : res.data.length , total_pages : Math.ceil(res.data.length / 10) , page_num : 1}))
+            return
+        }
+            axios.get("http://localhost:8000/getAllItems").then(res => this.setState({
+                items: res.data,
+                length: res.data.length,
+                total_pages: Math.ceil(res.data.length / 10),
+                page_num: 1
+            }))
+            cookie.remove("cart-search")
+        }
 
     render() {
 
@@ -44,6 +58,7 @@ class ProductList extends React.Component{
                         <Grid container={true} xs> <img src={logo} className={"logo"}/> </Grid>
                         <Grid item xs = {9}> <TextField id = "search-input" fullWidth={true}  margin={"dense"} placeholder={"Search"} variant='outlined'/> </Grid>
                         <Grid item xs> <Button id = "search-button" onClick={this.handleSearch} variant={"contained"} style={{padding : "20px 20px 20px 20px"}}> Search </Button> </Grid>
+                            <Grid item xs><Link href={"/cart"}><Badge color="primary"><ShoppingCartIcon style={{scale : "200%",paddingTop:'10px'}}/></Badge></Link> </Grid>
                         <Grid item xs > <Typography paddingTop={2}> <b>{this.userCheck()} </b></Typography> </Grid>
                             </Grid>
                     </div>
@@ -59,6 +74,7 @@ class ProductList extends React.Component{
                         <Grid container={true} xs> <img src={logo} className={"logo"}/> </Grid>
                         <Grid item xs = {9}> <TextField id = "search-input" fullWidth={true}  margin={"dense"} placeholder={"Search"} variant='outlined'/> </Grid>
                         <Grid item xs> <Button id = "search-button" onClick={this.handleSearch} variant={"contained"} style={{padding : "20px 20px 20px 20px"}}> Search </Button> </Grid>
+                            <Grid item xs> <Link href={"/cart"} component={"button"}><Badge color="primary"><ShoppingCartIcon style={{scale : "200%",paddingTop:'10px'}}/></Badge></Link></Grid>
                         <Grid item xs> <Typography paddingTop={2}> <b>{this.userCheck()} </b></Typography> </Grid>
                             </Grid>
                     </div>

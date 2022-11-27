@@ -1,7 +1,7 @@
-fastapi
+fastapi>=0.87.0
 pydantic
 mysql-connector-python
-uvicorn
+uvicorn>=0.20.0
 python-jose[cryptography]
 passlib[bcrypt]
 python-multipart
