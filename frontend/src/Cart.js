@@ -35,7 +35,7 @@ class CartView extends React.Component{
     userCheck = () => {
         const cookies = new Cookies()
         const name = cookies.get("full_name")
-        return !name  ?  "Hello, Guest" : `Hello, ${name}`
+        return !name  ?  "Hello, Guest" : `Hello, ${name.split(" ")[0]}`
     };
 
     getTotal = () => {
@@ -62,10 +62,12 @@ class CartView extends React.Component{
                         </Grid>
                     </div>
                 <Typography align={"center"} variant={"h3"} paddingBottom={10}>Cart</Typography>
-                {this.state.items.length === 0 ? <Typography  color={"error.main"} align={"center"}>No items in Cart </Typography> :
+                {this.state.items.length === 0 ? <Typography variant={"h4"}  color={"error.main"} align={"center"}>No items in Cart </Typography> :
                     <div>
                         {this.state.items.map(el => <CartItemParse item ={el} parentUpdate = {this.getCartItems}/>)}
-                       <b><Typography align={"center"} variant={"h3"}>Total : Rs. {this.getTotal().toFixed(2)}</Typography></b>
+                        <div style={{paddingLeft:"77%"}}>
+                       <b><Typography gutterBottom variant={"h4"}>Total : Rs. {this.getTotal().toFixed(2)}</Typography></b>
+                            <Button variant={"contained"} size={"large"} color={"success"}>Buy Now</Button> <span/></div>
                     </div>
                 }
             </div>

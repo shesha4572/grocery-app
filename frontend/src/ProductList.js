@@ -5,6 +5,7 @@ import logo from "./logo.jpg";
 import ParseItems from "./ParseItems";
 import {Cookies} from "react-cookie";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import {Navigate} from "react-router-dom";
 
 class ProductList extends React.Component{
     initialState = {
@@ -12,6 +13,7 @@ class ProductList extends React.Component{
         length : 0,
         page_num : 0,
         total_pages : 0,
+        redirectToCart : false
     }
 
     state = this.initialState
@@ -35,10 +37,14 @@ class ProductList extends React.Component{
         const cookie = new Cookies()
         const inp = cookie.get("cart-search")
         console.log(inp)
-        if(inp !== undefined){
-            axios.get(`http://localhost:8000/searchItem${inp}`).then(res => this.setState({items : res.data , length : res.data.length , total_pages : Math.ceil(res.data.length / 10) , page_num : 1}))
-            return
-        }
+        if (inp !== undefined) {
+            axios.get(`http://localhost:8000/searchItem${inp}`).then(res => this.setState({
+                items: res.data,
+                length: res.data.length,
+                total_pages: Math.ceil(res.data.length / 10),
+                page_num: 1
+            }))
+        } else {
             axios.get("http://localhost:8000/getAllItems").then(res => this.setState({
                 items: res.data,
                 length: res.data.length,
@@ -48,20 +54,28 @@ class ProductList extends React.Component{
             cookie.remove("cart-search")
         }
 
+    }
+
     render() {
+
+        if(this.state.redirectToCart){
+            return (
+                <Navigate to={"/cart"}/>
+            )
+        }
 
         if(this.state.items.length === 0){
             return (
                  <div>
-                    <div className ="navbar">
-                        <Grid container xs spacing={3}>
-                        <Grid container={true} xs> <img src={logo} className={"logo"}/> </Grid>
-                        <Grid item xs = {9}> <TextField id = "search-input" fullWidth={true}  margin={"dense"} placeholder={"Search"} variant='outlined'/> </Grid>
-                        <Grid item xs> <Button id = "search-button" onClick={this.handleSearch} variant={"contained"} style={{padding : "20px 20px 20px 20px"}}> Search </Button> </Grid>
-                            <Grid item xs><Link href={"/cart"}><Badge color="primary"><ShoppingCartIcon style={{scale : "200%",paddingTop:'10px'}}/></Badge></Link> </Grid>
-                        <Grid item xs > <Typography paddingTop={2}> <b>{this.userCheck()} </b></Typography> </Grid>
-                            </Grid>
-                    </div>
+                     <div className ="navbar" style={{width : "93%"}}>
+                         <Grid container xs spacing={3}>
+                             <Grid container={true} xs> <img src={logo} className={"logo"}/> </Grid>
+                             <Grid item xs = {9}> <TextField id = "search-input" fullWidth={true}  margin={"dense"} placeholder={"Search"} variant='outlined'/> </Grid>
+                             <Grid item xs> <Button id = "search-button" onClick={this.handleSearch} variant={"contained"} style={{padding : "20px 20px 20px 20px"}}> Search </Button> </Grid>
+                             <Grid item xs><ShoppingCartIcon style={{scale : "200%",paddingTop:'10px' , paddingLeft:"15px"}} onClick={() => this.setState({redirectToCart : true})}/></Grid>
+                             <Grid item xs={0.5}> <Typography paddingTop={1}> <b>{this.userCheck()} </b></Typography> </Grid>
+                         </Grid>
+                     </div>
                     <Typography color={"error.main"} alignItems={"center"}>No items Found! Please Check your Search Phrase and Try again </Typography>
                 </div>
             )
@@ -69,13 +83,13 @@ class ProductList extends React.Component{
 
         return(
                 <div>
-                    <div className ="navbar">
+                    <div className ="navbar" style={{width:"93%"}}>
                         <Grid container xs spacing={3}>
                         <Grid container={true} xs> <img src={logo} className={"logo"}/> </Grid>
                         <Grid item xs = {9}> <TextField id = "search-input" fullWidth={true}  margin={"dense"} placeholder={"Search"} variant='outlined'/> </Grid>
                         <Grid item xs> <Button id = "search-button" onClick={this.handleSearch} variant={"contained"} style={{padding : "20px 20px 20px 20px"}}> Search </Button> </Grid>
-                            <Grid item xs> <Link href={"/cart"} component={"button"}><Badge color="primary"><ShoppingCartIcon style={{scale : "200%",paddingTop:'10px'}}/></Badge></Link></Grid>
-                        <Grid item xs> <Typography paddingTop={2}> <b>{this.userCheck()} </b></Typography> </Grid>
+                            <Grid item xs><ShoppingCartIcon style={{scale : "200%",paddingTop:'10px' , paddingLeft:"15px"}} onClick={() => this.setState({redirectToCart : true})}/></Grid>
+                            <Grid item xs={0.5}> <Typography paddingTop={1}> <b>{this.userCheck()} </b></Typography> </Grid>
                             </Grid>
                     </div>
                         <Grid container padding={"20px 20px 20px 20px"}>
