@@ -7,6 +7,7 @@ import LoginPage from "./LoginPage";
 import ProductList from "./ProductList";
 import CartView from "./Cart";
 import PrivateRoute from "./PrivateRoute";
+import Payment from "./Payment";
 
 function App() {
     return(
@@ -16,6 +17,7 @@ function App() {
             <Route path= "/login" element={<LoginPage/>}/>
             <Route path= "/allItems" element={<PrivateRoute><ProductList/></PrivateRoute>}/>
             <Route path = "/cart" element = {<PrivateRoute><CartView/></PrivateRoute>}/>
+            <Route path={"/payment"} element={<Payment/>}/>
         </Routes>
     )
 }

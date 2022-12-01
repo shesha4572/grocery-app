@@ -285,7 +285,6 @@ def reserveItem(item_id : int = Form(...) , item_type : float = Form(...)  , ite
     old_qty = 0
     if res is not None:
         old_qty = res[3]
-        print(old_qty)
         cur.execute(f"UPDATE item_reservation SET Item_qty = {item_qty} WHERE Item_ID = {item_id} AND Item_type = {item_type};")
     else:
         cur.execute(f"INSERT INTO item_reservation(Cust_ID, Item_ID, Item_type, Item_qty) VALUES ({user_id} , {item_id} , {item_type} , {item_qty});")
