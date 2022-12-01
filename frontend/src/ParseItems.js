@@ -34,7 +34,8 @@ class ParseItems extends React.Component{
             this.setState({
                 item: this.props.item,
                 price: this.props.item.details[0][1],
-                stock: this.props.item.details[0][2]
+                stock: this.props.item.details[0][2],
+                selected_type : this.props.details[0][0]
             })
         }
     }
