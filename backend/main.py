@@ -330,6 +330,33 @@ def deleteItemFromCart(item_id : int = Form(...) , item_type : float = Form(...)
         cur.execute(f"UPDATE items_volume SET Stock = Stock + {item_qty} WHERE Item_ID = {item_id} AND Volume = {item_type}")
     db.commit()
 
+@app.post("/checkout")
+def checkOut(user_token : str = Form(...) , address : str = Form(...) , payment_method : str = Form(...) , amount : float = Form(...)):
+    payload = jwt.decode(user_token, SECRET_KEY, algorithms=[ALGORITHM])
+    username = payload.get("sub")
+    cur.execute(f"SELECT Cust_ID FROM Customer WHERE Username LIKE '{username}';")
+    user_id = cur.fetchone()[0]
+    cur.execute(f"INSERT INTO Orders(Amount, Cust_ID, Payment_type , Address) VALUES ({amount} , {user_id} , '{payment_method}' , '{address}');")
+    cur.execute(f"SELECT Order_ID FROM Orders WHERE Cust_ID = {user_id} ORDER BY Order_date_time DESC")
+    order_id = cur.fetchall()[0][0]
+    cur.execute(f"SELECT * FROM item_reservation WHERE Cust_ID = {user_id}")
+    det = cur.fetchall()
+    items = []
+    for i in det:
+        cur.execute(f"SELECT type FROM Items WHERE Item_ID = {i[1]}")
+        type = cur.fetchone()[0]
+        item_price = 0
+        if type == 1:
+            cur.execute(f"SELECT Price FROM items_weight WHERE Item_ID = {i[1]} AND Weight = {i[2]}")
+            item_price = cur.fetchone()[0]
+        else:
+            cur.execute(f"SELECT Price FROM items_volume WHERE Item_ID = {i[1]} AND Volume = {i[2]}")
+            item_price = cur.fetchone()[0]
+        cur.execute(f"INSERT INTO orders_items(Order_Id, Item_Id, Item_type, Type, Item_price, Qty) VALUES ({order_id} , {i[1]} , {i[2]} , {type} , {item_price} , {i[3]})")
+    cur.execute(f"DELETE FROM item_reservation WHERE Cust_ID = {user_id}")
+    db.commit()
+    return order_id
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app)

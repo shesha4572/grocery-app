@@ -13,7 +13,8 @@ class CartView extends React.Component{
 
     initialState = {
         items : [],
-        redirect : false
+        redirect : false,
+        redirectToPayment : false
     }
 
     state = this.initialState
@@ -44,7 +45,19 @@ class CartView extends React.Component{
         return total;
     }
 
+    handleCheckout = () => {
+        const cookies = new Cookies()
+        cookies.set("amount" , this.getTotal())
+        this.setState({redirectToPayment : true})
+    }
+
     render() {
+
+        if(this.state.redirectToPayment){
+            return (
+                <Navigate to={"/payment"} state={{amount : this.getTotal()}}/>
+            )
+        }
 
         if(this.state.redirect){
             return <Navigate to={"/allItems"}/>
@@ -67,7 +80,7 @@ class CartView extends React.Component{
                         {this.state.items.map(el => <CartItemParse item ={el} parentUpdate = {this.getCartItems}/>)}
                         <div style={{paddingLeft:"77%"}}>
                        <b><Typography gutterBottom variant={"h4"}>Total : Rs. {this.getTotal().toFixed(2)}</Typography></b>
-                            <Button variant={"contained"} size={"large"} color={"success"}>Buy Now</Button> <span/></div>
+                            <Button variant={"contained"} size={"large"} color={"success"} onClick={this.handleCheckout}>Checkout</Button> <span/></div>
                     </div>
                 }
             </div>
