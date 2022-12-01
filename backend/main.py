@@ -66,6 +66,21 @@ class CartItem(BaseModel):
     price : float
     stock_available : int
 
+class OrderedItems(BaseModel):
+    item_id : int
+    weight : float | None = None
+    volume : float | None = None
+    price : float
+    qty : int
+class PreviousOrders(BaseModel):
+    id : int
+    time : datetime
+    address : str
+    amount : float
+    payment_type : str
+    items : list
+
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -356,6 +371,30 @@ def checkOut(user_token : str = Form(...) , address : str = Form(...) , payment_
     cur.execute(f"DELETE FROM item_reservation WHERE Cust_ID = {user_id}")
     db.commit()
     return order_id
+
+@app.get("/previousOrders/{token}")
+def getAllOldOrders(token : str):
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    username = payload.get("sub")
+    cur.execute(f"SELECT Cust_ID FROM Customer WHERE Username LIKE '{username}';")
+    user_id = cur.fetchone()[0]
+    orders = []
+    cur.execute(f"SELECT * FROM Orders WHERE Cust_ID = {user_id}")
+    det = cur.fetchall()
+    for i in det:
+        cur.execute(f"SELECT * FROM orders_items WHERE Order_Id = {i[0]};")
+        items = cur.fetchall()
+        items_in_order = []
+        for item in items:
+            if(item[3] == 1):
+                items_in_order.append(OrderedItems(item_id = item[1] , price = item[4] , qty = item[5] , weight = item[2]))
+            else:
+                items_in_order.append(OrderedItems(item_id = item[1] , price = item[4] , qty = item[5] , volume = item[2]))
+        orders.append(PreviousOrders(id = i[0] , amount = i[1] , payment_type = i[3] , time = i[4] , address = i[5] , items = items_in_order))
+
+    return orders
+
+
 
 if __name__ == "__main__":
     import uvicorn

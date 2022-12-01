@@ -30,12 +30,13 @@ class ParseItems extends React.Component{
 
 
     componentDidUpdate(prevProps, prevState, snapshot) {
+        console.log(this.props)
         if(this.props.id !== prevProps.id) {
             this.setState({
                 item: this.props.item,
                 price: this.props.item.details[0][1],
                 stock: this.props.item.details[0][2],
-                selected_type : this.props.details[0][0]
+                selected_type : this.props.item.details[0][0]
             })
         }
     }

@@ -10,6 +10,7 @@ import {
     TextField, InputLabel, FormControl
 } from "@mui/material";
 import axios from "axios";
+import {Navigate, useNavigate} from "react-router-dom";
 
 export const Register=()=> {
     const bstyles = {
@@ -20,6 +21,7 @@ export const Register=()=> {
             height:'77vh',
         }
     };
+    const navigator = useNavigate()
     const Headerstyle = {marginTop:0}
     const backstyle = {backgroundColor: 'green'}
     const paperstyle = {padding:35,height:'55vh',width:300,margin:"20px auto",borderRadius:'25px',backgroundColor:'rgba(217, 235, 238, 0.57)'};
@@ -36,7 +38,7 @@ export const Register=()=> {
         if(password.length!==0){
             if(password===cPassword){
                 message.textContent="";
-                axios.post("http://localhost:8000/createUser/" , form).then(res => console.log(res.data))
+                axios.post("http://localhost:8000/createUser/" , form).then(res => {if(res.status === 200){alert("Sign Up Successful. Redirecting To Login"); navigator("/login")}})
             }
             else{
                 message.textContent="Passwords don't match";
@@ -47,8 +49,6 @@ export const Register=()=> {
             alert("Password can't be empty!");
             message.textContent="";
         }
-        console.log(password,cPassword);
-        console.log(Name , email , password , confirmPass , username , gender)
 
     }
 

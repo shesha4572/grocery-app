@@ -25,7 +25,7 @@ class Payment extends React.Component{
         form.set("address" , document.getElementById("address").value)
         form.set("payment_method" , this.state.paymentMethod)
         form.set("amount" , cookie.get("amount"))
-        axios.post("http://localhost:8000/checkout" , form).then(res => {if(res.status === 200){this.setState({order_id : res.data}); console.log(res.data); alert(`Order #${res.data} placed successfully. Redirecting to items page`)}})
+        axios.post("http://localhost:8000/checkout" , form).then(res => {if(res.status === 200){this.setState({order_id : res.data}); console.log(res.data); cookie.remove("amount"); alert(`Order #${res.data} placed successfully. Redirecting to items page`)}})
     }
 
 

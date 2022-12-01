@@ -84,7 +84,7 @@ class LoginPage extends React.Component {
                                             onClick={this.LoginSubmit}> LOGIN </Button>
                                 </div>
                                 <p className="link" style={{marginTop: '15px'}}>
-                                    <a href="#">Forgot Password ?</a> OR <a href="#">Sign Up</a>
+                                    <a href="#">Forgot Password ?</a> OR <a href="/register">Sign Up</a>
                                 </p>
                             </div>
                         </div>
